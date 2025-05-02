@@ -1,0 +1,9 @@
+services:
+    shokuin-app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "8123:8123"
+        volumes:
+            - .:/app
