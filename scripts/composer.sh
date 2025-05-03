@@ -1,0 +1,1 @@
+docker run --rm -v "$(pwd)/../:/app" -w /app composer:latest /bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.4) && composer install" && docker rmi composer:latest
