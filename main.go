@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"wlczak/shokuin/database"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,14 +28,16 @@ func setupRouter() *gin.Engine {
 
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{
-			"title": "Main website",
+			"title": "Home",
 		})
 	})
+
 	return r
 }
 
 func main() {
 	r := setupRouter()
+	database.Connect()
 	// Listen and Server in 0.0.0.0:8080
 	r.Run(":8080")
 }
