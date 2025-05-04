@@ -7,11 +7,11 @@ import (
 	"gorm.io/gorm"
 )
 
-type connection struct {
-	db *gorm.DB
+type Connection struct {
+	DB *gorm.DB
 }
 
-func GetDB() connection {
+func GetDB() Connection {
 	dsn := "host=localhost user=gorm password=gorm dbname=gorm port=5432 sslmode=disable TimeZone=Europe/Prague"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
@@ -19,13 +19,13 @@ func GetDB() connection {
 		panic("failed to connect database")
 	}
 
-	return connection{db: db}
+	return Connection{DB: db}
 }
 
-func (d connection) Setup() {
-	if d.db == nil {
+func (d Connection) Setup() {
+	if d.DB == nil {
 		panic("db isn't initialized")
 	}
 
-	d.db.AutoMigrate(&schema.User{})
+	d.DB.AutoMigrate(&schema.User{})
 }
