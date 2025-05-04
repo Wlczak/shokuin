@@ -21,6 +21,8 @@ func setupRouter() *gin.Engine {
 		})
 	}))
 
+	r.StaticFS("/static", http.Dir("static"))
+
 	r.LoadHTMLGlob("templates/*")
 
 	// Ping test
