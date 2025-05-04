@@ -1,7 +1,7 @@
 {
-    "masterProcessId": 105556,
+    "masterProcessId": 113977,
     "state": {
-        "appName": "Laravel",
+        "appName": "Shokuin",
         "host": "127.0.0.1",
         "port": "8000",
         "adminHost": "localhost",
