@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"wlczak/shokuin/auth"
 	"wlczak/shokuin/database"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,7 @@ func setupRouter() *gin.Engine {
 	gin.SetMode(gin.DebugMode)
 
 	r := gin.Default()
+
 	r.Use(gin.CustomRecovery(func(c *gin.Context, err any) {
 		c.HTML(http.StatusInternalServerError, "error.tmpl", gin.H{
 			"error": err,
@@ -31,6 +33,9 @@ func setupRouter() *gin.Engine {
 			"title": "Home",
 		})
 	})
+
+	r.GET("/register", auth.HandleRegister)
+	r.POST("/register", auth.HandleRegisterPost)
 
 	return r
 }
