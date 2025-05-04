@@ -1,5 +1,6 @@
 {
     "require": {
-        "laravel/octane": "^2.9"
+        "laravel/octane": "^2.9",
+        "livewire/livewire": "^3.6"
     }
 }
