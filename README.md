@@ -21,8 +21,18 @@ It is a simple word play of 「食」(shoku) meaning food and 「イン」(in) b
 ## Table of Contents
 
 <!-- - [Usage](#usage) -->
+
+- [MVP 「minimal viable product」](#mvp-minimal-viable-product)
 - [Installation](#installation)
 - [Contributing](#contributing)
+
+## MVP 「minimal viable product」
+
+- [ ] User login && auth management
+- [ ] Databese schemas
+- [ ] Form for adding food
+- [ ] Form for editing food
+- [ ] Food list view
 
 ## Installation
 
