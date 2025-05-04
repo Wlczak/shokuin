@@ -1,0 +1,8 @@
+parameters:
+    ignoreErrors:
+    level: 0
+    paths:
+        - app
+        
+        
+        
