@@ -7,5 +7,7 @@ import (
 
 func RegisterUser(user *schema.User) {
 	db := database.GetDB()
+
 	db.DB.Create(user)
+
 }

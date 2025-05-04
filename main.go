@@ -2,10 +2,12 @@ package main
 
 import (
 	"net/http"
+	"time"
 	"wlczak/shokuin/auth"
 	"wlczak/shokuin/database"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 func setupRouter() *gin.Engine {
@@ -16,6 +18,15 @@ func setupRouter() *gin.Engine {
 	r := gin.Default()
 
 	r.Use(gin.CustomRecovery(func(c *gin.Context, err any) {
+		sugar := zap.NewExample().Sugar()
+		defer sugar.Sync()
+		sugar.Infow("failed to fetch URL",
+			"url", "http://example.com",
+			"attempt", 3,
+			"backoff", time.Second,
+		)
+		sugar.Infof("failed to fetch URL: %s", "http://example.com")
+
 		c.HTML(http.StatusInternalServerError, "error.tmpl", gin.H{
 			"error": err,
 		})
@@ -46,6 +57,7 @@ func main() {
 	r := setupRouter()
 
 	d := database.GetDB()
+
 	d.Setup()
 
 	// Listen and Server in 0.0.0.0:8080

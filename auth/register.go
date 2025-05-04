@@ -6,6 +6,7 @@ import (
 	"wlczak/shokuin/database/schema"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func HandleRegister(c *gin.Context) {
@@ -28,7 +29,17 @@ func HandleRegisterPost(c *gin.Context) {
 		return
 	}
 
-	model.RegisterUser(&schema.User{Username: username, Email: "test@test.test", Password: password})
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+	if err != nil {
+		c.HTML(http.StatusOK, "register.tmpl", gin.H{
+			"title":   "Register",
+			"message": err,
+		})
+		return
+	}
+
+	model.RegisterUser(&schema.User{Username: username, Email: "test@test.test", Password: string(hash)})
 
 	c.HTML(http.StatusOK, "auth_success.tmpl", gin.H{
 		"title":   "Register",
