@@ -30,5 +30,11 @@ func (d Connection) Setup() {
 		panic("db isn't initialized")
 	}
 
-	d.DB.AutoMigrate(&schema.User{})
+	err := d.DB.AutoMigrate(&schema.User{})
+
+	if err != nil {
+		zap := logger.GetLogger()
+		zap.Error(err.Error())
+		panic(err)
+	}
 }
