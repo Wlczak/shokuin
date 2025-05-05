@@ -1,9 +1,11 @@
 package auth
 
 import (
+	"errors"
 	"net/http"
 	"wlczak/shokuin/database/model"
 	"wlczak/shokuin/database/schema"
+	error_page "wlczak/shokuin/routing/error"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -21,10 +23,19 @@ func HandleRegisterPost(c *gin.Context) {
 	password := c.PostForm("password")
 	passwordRepeat := c.PostForm("password-repeat")
 
+	var err error = nil
 	if password != passwordRepeat {
+		err = errors.New("passwords don't match")
+	}
+
+	if username == "" || password == "" || passwordRepeat == "" {
+		err = errors.New("username or password is empty")
+	}
+
+	if err != nil {
 		c.HTML(http.StatusOK, "register.tmpl", gin.H{
 			"title":   "Register",
-			"message": "Passwords don't match",
+			"message": err.Error(),
 		})
 		return
 	}
@@ -32,17 +43,22 @@ func HandleRegisterPost(c *gin.Context) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
 	if err != nil {
+		error_page.WriteErrorPage(c, err)
+		return
+	}
+
+	err = model.RegisterUser(&schema.User{Username: username, Email: "", Password: string(hash)})
+
+	if err != nil {
 		c.HTML(http.StatusOK, "register.tmpl", gin.H{
 			"title":   "Register",
-			"message": err,
+			"message": err.Error(),
 		})
 		return
 	}
 
-	model.RegisterUser(&schema.User{Username: username, Email: "test@test.test", Password: string(hash)})
-
 	c.HTML(http.StatusOK, "auth_success.tmpl", gin.H{
 		"title":   "Register",
-		"message": "Registered",
+		"message": "Registered successfully",
 	})
 }
