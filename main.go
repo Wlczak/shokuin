@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"time"
 	"wlczak/shokuin/auth"
 	"wlczak/shokuin/database"
 
@@ -18,15 +17,6 @@ func setupRouter() *gin.Engine {
 	r := gin.Default()
 
 	r.Use(gin.CustomRecovery(func(c *gin.Context, err any) {
-		sugar := zap.NewExample().Sugar()
-		defer sugar.Sync()
-		sugar.Infow("failed to fetch URL",
-			"url", "http://example.com",
-			"attempt", 3,
-			"backoff", time.Second,
-		)
-		sugar.Infof("failed to fetch URL: %s", "http://example.com")
-
 		c.HTML(http.StatusInternalServerError, "error.tmpl", gin.H{
 			"error": err,
 		})
@@ -54,6 +44,19 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
+	cfg := zap.Config{
+		Encoding:         "json",
+		Level:            zap.NewAtomicLevelAt(zap.InfoLevel),
+		OutputPaths:      []string{"stdout", "logs/app.log"},
+		ErrorOutputPaths: []string{"stderr"},
+		EncoderConfig:    zap.NewProductionEncoderConfig(),
+	}
+
+	logger, _ := cfg.Build()
+	defer logger.Sync()
+
+	logger.Info("Starting Shokuin")
+
 	r := setupRouter()
 
 	d := database.GetDB()
