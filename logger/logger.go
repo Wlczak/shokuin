@@ -9,6 +9,7 @@ func GetLogger() zap.Logger {
 		OutputPaths:      []string{"stdout", "logger/logs/app.log"},
 		ErrorOutputPaths: []string{"stderr"},
 		EncoderConfig:    zap.NewProductionEncoderConfig(),
+		InitialFields:    map[string]interface{}{},
 	}
 
 	logger, err := cfg.Build()

@@ -7,6 +7,7 @@ import (
 	"wlczak/shokuin/routes/auth"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func setupRouter() *gin.Engine {
@@ -47,10 +48,13 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
-
 	zap := logger.GetLogger()
-
 	zap.Info("Starting server")
+
+	err := godotenv.Load()
+	if err != nil {
+		zap.Fatal(err.Error())
+	}
 
 	r := setupRouter()
 
