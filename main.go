@@ -2,11 +2,11 @@ package main
 
 import (
 	"net/http"
-	"wlczak/shokuin/auth"
 	"wlczak/shokuin/database"
+	"wlczak/shokuin/logger"
+	"wlczak/shokuin/routing/auth"
 
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 )
 
 func setupRouter() *gin.Engine {
@@ -44,22 +44,18 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
-	cfg := zap.Config{
-		Encoding:         "json",
-		Level:            zap.NewAtomicLevelAt(zap.InfoLevel),
-		OutputPaths:      []string{"stdout", "logs/app.log"},
-		ErrorOutputPaths: []string{"stderr"},
-		EncoderConfig:    zap.NewProductionEncoderConfig(),
-	}
 
-	logger, _ := cfg.Build()
-	defer logger.Sync()
+	zap := logger.GetLogger()
 
-	logger.Info("Starting Shokuin")
+	zap.Info("Starting server")
 
 	r := setupRouter()
 
-	d := database.GetDB()
+	d, err := database.GetDB()
+
+	if err != nil {
+		zap.Error(err.Error())
+	}
 
 	d.Setup()
 
