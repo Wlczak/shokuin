@@ -31,8 +31,11 @@ jobs:
             - name: Build
               run: go build -v ./...
 
-            - name: Staticcheck
-              run: staticcheck ./...
+            - uses: dominikh/staticcheck-action@v1
+              with:
+                  version: "latest"
+            # - name: Staticcheck
+            #   run: staticcheck ./...
 
             - name: GolangCI-Lint
               run: golangci-lint run
