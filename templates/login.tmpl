@@ -10,10 +10,16 @@
 
 <body>
     <div class="columns is-vcentered" style="height: 100vh;">
-
+        
         <div class="column"></div>
         <div class="column is-half">
-            homepage
+            <div class="box is-align is-centered">
+                <form action="/login" method="post">
+                    <input type="text" name="username">
+                    <input type="password" name="password">
+                    <button type="submit">Login</button>
+                </form>
+            </div>
         </div>
         <div class="column"></div>
 
