@@ -13,7 +13,15 @@
 
         <div class="column"></div>
         <div class="column is-half">
-            homepage
+            {{ .message }}
+            <div class="box is-align is-centered">
+                <form action="" method="post">
+                    <input type="text" name="username">
+                    <input type="password" name="password">
+                    <input type="password" name="password-repeat">
+                    <button type="submit">Register</button>
+                </form>
+            </div>
         </div>
         <div class="column"></div>
 

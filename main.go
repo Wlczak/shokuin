@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 	"wlczak/shokuin/database"
+	"wlczak/shokuin/logger"
+	"wlczak/shokuin/routing/auth"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,11 +15,14 @@ func setupRouter() *gin.Engine {
 	gin.SetMode(gin.DebugMode)
 
 	r := gin.Default()
+
 	r.Use(gin.CustomRecovery(func(c *gin.Context, err any) {
 		c.HTML(http.StatusInternalServerError, "error.tmpl", gin.H{
 			"error": err,
 		})
 	}))
+
+	r.StaticFS("/static", http.Dir("static"))
 
 	r.LoadHTMLGlob("templates/*")
 
@@ -32,14 +37,28 @@ func setupRouter() *gin.Engine {
 		})
 	})
 
+	r.GET("/register", auth.HandleRegister)
+	r.POST("/register", auth.HandleRegisterPost)
+
 	return r
 }
 
 func main() {
+
+	zap := logger.GetLogger()
+
+	zap.Info("Starting server")
+
 	r := setupRouter()
 
-	d := database.GetDB()
+	d, err := database.GetDB()
+
+	if err != nil {
+		zap.Error(err.Error())
+	}
+
 	d.Setup()
+
 	// Listen and Server in 0.0.0.0:8080
 	r.Run(":8080")
 }
