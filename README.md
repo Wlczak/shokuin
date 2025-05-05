@@ -28,8 +28,9 @@ It is a simple word play of 「食」(shoku) meaning food and 「イン」(in) b
 
 ## MVP 「minimal viable product」
 
-- [ ] User login && auth management
-- [ ] Databese schemas
+- [x] User login && registration
+- [ ] Auth management
+- [ ] Basic databese schemas
 - [ ] Form for adding food
 - [ ] Form for editing food
 - [ ] Food list view

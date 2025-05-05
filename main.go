@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"wlczak/shokuin/database"
 	"wlczak/shokuin/logger"
-	"wlczak/shokuin/routing/auth"
+	"wlczak/shokuin/routes/auth"
 
 	"github.com/gin-gonic/gin"
 )
@@ -39,6 +39,9 @@ func setupRouter() *gin.Engine {
 
 	r.GET("/register", auth.HandleRegister)
 	r.POST("/register", auth.HandleRegisterPost)
+
+	r.GET("/login", auth.HandleLogin)
+	r.POST("/login", auth.HandleLoginPost)
 
 	return r
 }
