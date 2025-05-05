@@ -37,8 +37,19 @@ jobs:
             # - name: Staticcheck
             #   run: staticcheck ./...
 
-            - name: GolangCI-Lint
-              run: golangci-lint run
+            - name: golangci-lint
+              uses: golangci/golangci-lint-action@v8
+              with:
+                  version: v2.1
 
-            - name: Govulncheck
-              run: govulncheck ./...
+            # - name: GolangCI-Lint
+            #   run: golangci-lint run
+
+            - name: govulncheck
+              uses: golang/govulncheck-action@v1
+              with:
+                  go-version-input: 1.24.2
+                  go-package: ./...
+
+            # - name: Govulncheck
+            #   run: govulncheck ./...
