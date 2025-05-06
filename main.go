@@ -10,7 +10,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"go.uber.org/zap"
 )
 
 func setupRouter() *gin.Engine {
@@ -74,7 +73,8 @@ func setupEnv() error {
 		}
 		defer func() {
 			if err := f.Close(); err != nil {
-				zap.Error(err)
+				zap := logger.GetLogger()
+				zap.Error(err.Error())
 			}
 		}()
 	}
