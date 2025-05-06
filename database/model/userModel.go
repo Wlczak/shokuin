@@ -2,9 +2,11 @@ package model
 
 import (
 	"fmt"
+
 	"wlczak/shokuin/database"
 	"wlczak/shokuin/database/schema"
 	"wlczak/shokuin/logger"
+	"wlczak/shokuin/utils"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -38,6 +40,7 @@ func RegisterUser(user *schema.User) error {
 	return nil
 }
 
+// TODO: Separete logic and database calls - logic should be in the routes handler
 func CheckUser(user *schema.User) error {
 	db := getUserModel()
 
@@ -59,4 +62,14 @@ func CheckUser(user *schema.User) error {
 	}
 
 	return nil
+}
+
+func GetUserLevelByUsername(user *schema.User) utils.AuthLevel {
+	db := getUserModel()
+
+	var DBUser schema.User
+
+	db.Where(schema.User{Username: user.Username}).First(&DBUser)
+
+	return DBUser.AuthLevel
 }

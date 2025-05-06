@@ -2,14 +2,18 @@ package main
 
 import (
 	"net/http"
+	"os"
 	"wlczak/shokuin/database"
 	"wlczak/shokuin/logger"
 	"wlczak/shokuin/routes/auth"
+	"wlczak/shokuin/utils"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func setupRouter() *gin.Engine {
+
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	gin.SetMode(gin.DebugMode)
@@ -31,11 +35,17 @@ func setupRouter() *gin.Engine {
 		c.String(http.StatusOK, "pong")
 	})
 
-	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{
-			"title": "Home",
+	g1 := r.Group("/")
+	{
+		g1.Use(auth.AuthMiddleware(utils.AuthLevelNone))
+		g1.GET("/", func(c *gin.Context) {
+
+			c.HTML(http.StatusOK, "index.tmpl", gin.H{
+				"title":   "Home",
+				"message": "hi",
+			})
 		})
-	})
+	}
 
 	r.GET("/register", auth.HandleRegister)
 	r.POST("/register", auth.HandleRegisterPost)
@@ -43,14 +53,67 @@ func setupRouter() *gin.Engine {
 	r.GET("/login", auth.HandleLogin)
 	r.POST("/login", auth.HandleLoginPost)
 
+	r.Group("/admin", auth.AuthMiddleware(utils.AuthLevelAdmin)).GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "admin")
+	})
+
+	r.Group("/user", auth.AuthMiddleware(utils.AuthLevelUser)).GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "user")
+	})
 	return r
 }
 
+// var EnvVars = []string{
+// 	"DB_HOST",
+// 	"DB_PORT",
+// 	"DB_USER",
+// 	"DB_PASSWORD",
+// 	"DB_NAME",
+// }
+
+func setupEnv() error {
+	_, err := os.Stat(".env")
+	if os.IsNotExist(err) {
+		f, err := os.Create(".env")
+		if err != nil {
+			return err
+		}
+		defer func() {
+			if err := f.Close(); err != nil {
+				zap := logger.GetLogger()
+				zap.Error(err.Error())
+			}
+		}()
+	}
+
+	// it would be nice to finish this, but it desn't have priority rn
+
+	// envMap, err := godotenv.Read(".env")
+
+	// godotenv.Read(".env")
+	// for _, value := range EnvVars {
+	// 	if envMap[value] == "" {
+	// 		godotenv.Write(map[string]string{
+	// 			value: "",
+	// 		}, ".env")
+	// 	}
+	// 	fmt.Println(value)
+	// }
+
+	err = godotenv.Load()
+
+	return err
+}
+
 func main() {
-
 	zap := logger.GetLogger()
-
 	zap.Info("Starting server")
+
+	err := setupEnv()
+
+	if err != nil {
+		zap.Fatal(err.Error())
+	}
 
 	r := setupRouter()
 

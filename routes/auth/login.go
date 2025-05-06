@@ -3,10 +3,14 @@ package auth
 import (
 	"errors"
 	"net/http"
+	"time"
 	"wlczak/shokuin/database/model"
 	"wlczak/shokuin/database/schema"
+	"wlczak/shokuin/logger"
+	"wlczak/shokuin/utils"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func HandleLogin(c *gin.Context) {
@@ -41,6 +45,22 @@ func HandleLoginPost(c *gin.Context) {
 		return
 	}
 
+	authLevel := model.GetUserLevelByUsername(&schema.User{Username: username})
+
+	token, err := utils.GenToken(jwt.MapClaims{
+		"username":   username,
+		"time":       time.Now().Unix(),
+		"exp":        time.Now().Add(time.Hour).Unix(),
+		"auth_level": authLevel,
+	})
+
+	if err != nil {
+		zap := logger.GetLogger()
+		zap.Error(err.Error())
+		return
+	}
+
+	c.SetCookie("SHOKUIN_JWT", token, 3600, "", "", false, true)
 	c.HTML(http.StatusOK, "auth_success.tmpl", gin.H{
 		"title":   "Login",
 		"message": "Successfully logged in",
