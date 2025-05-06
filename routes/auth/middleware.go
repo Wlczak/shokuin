@@ -35,13 +35,13 @@ func AuthMiddleware(lvl utils.AuthLevel) gin.HandlerFunc {
 				return
 			}
 
-			if claims["auth_level"] == nil {
+			if claims.Auth_level == 0 {
 				c.Redirect(http.StatusTemporaryRedirect, "/login")
 				c.Abort()
 				return
 			}
 
-			authLevel := claims["auth_level"].(utils.AuthLevel)
+			authLevel := claims.Auth_level
 
 			if authLevel < utils.AuthLevelUser {
 				c.Redirect(http.StatusTemporaryRedirect, "/login")
@@ -70,13 +70,13 @@ func AuthMiddleware(lvl utils.AuthLevel) gin.HandlerFunc {
 				return
 			}
 
-			if claims["auth_level"] == nil {
+			if claims.Auth_level == 0 {
 				c.Redirect(http.StatusTemporaryRedirect, "/login")
 				c.Abort()
 				return
 			}
 
-			authLevel := claims["auth_level"].(utils.AuthLevel)
+			authLevel := claims.Auth_level
 
 			if authLevel < utils.AuthLevelAdmin {
 				c.Redirect(http.StatusTemporaryRedirect, "/login")

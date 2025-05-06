@@ -53,6 +53,13 @@ func setupRouter() *gin.Engine {
 	r.GET("/login", auth.HandleLogin)
 	r.POST("/login", auth.HandleLoginPost)
 
+	r.Group("/admin", auth.AuthMiddleware(utils.AuthLevelAdmin)).GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "admin")
+	})
+
+	r.Group("/user", auth.AuthMiddleware(utils.AuthLevelUser)).GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "user")
+	})
 	return r
 }
 

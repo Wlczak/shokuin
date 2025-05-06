@@ -48,10 +48,10 @@ func HandleLoginPost(c *gin.Context) {
 	authLevel := model.GetUserLevelByUsername(&schema.User{Username: username})
 
 	token, err := utils.GenToken(jwt.MapClaims{
-		"username":  username,
-		"time":      time.Now().Unix(),
-		"exp":       time.Now().Add(time.Hour).Unix(),
-		"authLevel": authLevel,
+		"username":   username,
+		"time":       time.Now().Unix(),
+		"exp":        time.Now().Add(time.Hour).Unix(),
+		"auth_level": authLevel,
 	})
 
 	if err != nil {

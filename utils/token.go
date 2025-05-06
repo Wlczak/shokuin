@@ -7,6 +7,14 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type TokenClaims struct {
+	Auth_level AuthLevel
+	Username   string
+	Exp        int
+	Time       int
+	jwt.RegisteredClaims
+}
+
 func GenToken(claims jwt.MapClaims) (string, error) {
 
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS512, claims).SignedString([]byte(os.Getenv("APP_KEY")))
@@ -14,8 +22,9 @@ func GenToken(claims jwt.MapClaims) (string, error) {
 	return token, err
 }
 
-func DecodeToken(token string) (*jwt.Token, jwt.MapClaims, error) {
-	claims := jwt.MapClaims{}
+func DecodeToken(token string) (*jwt.Token, TokenClaims, error) {
+	claims := TokenClaims{}
+
 	jwt, err := jwt.ParseWithClaims(token, &claims, func(t *jwt.Token) (interface{}, error) {
 		key := os.Getenv("APP_KEY")
 
