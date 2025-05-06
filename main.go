@@ -6,12 +6,15 @@ import (
 	"wlczak/shokuin/database"
 	"wlczak/shokuin/logger"
 	"wlczak/shokuin/routes/auth"
+	"wlczak/shokuin/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"go.uber.org/zap"
 )
 
 func setupRouter() *gin.Engine {
+
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	gin.SetMode(gin.DebugMode)
@@ -33,13 +36,17 @@ func setupRouter() *gin.Engine {
 		c.String(http.StatusOK, "pong")
 	})
 
-	r.GET("/", func(c *gin.Context) {
+	g1 := r.Group("/")
+	{
+		g1.Use(auth.AuthMiddleware(utils.AuthLevelNone))
+		g1.GET("/", func(c *gin.Context) {
 
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{
-			"title":   "Home",
-			"message": "hi",
+			c.HTML(http.StatusOK, "index.tmpl", gin.H{
+				"title":   "Home",
+				"message": "hi",
+			})
 		})
-	})
+	}
 
 	r.GET("/register", auth.HandleRegister)
 	r.POST("/register", auth.HandleRegisterPost)
@@ -65,7 +72,11 @@ func setupEnv() error {
 		if err != nil {
 			return err
 		}
-		defer f.Close()
+		defer func() {
+			if err := f.Close(); err != nil {
+				zap.Error(err)
+			}
+		}()
 	}
 
 	// it would be nice to finish this, but it desn't have priority rn
