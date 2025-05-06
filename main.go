@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"wlczak/shokuin/database"
@@ -9,7 +8,6 @@ import (
 	"wlczak/shokuin/routes/auth"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 )
 
@@ -36,23 +34,6 @@ func setupRouter() *gin.Engine {
 	})
 
 	r.GET("/", func(c *gin.Context) {
-
-		tokenString, err := c.Cookie("SHOKUIN_JWT")
-		if err != nil {
-			c.AbortWithStatus(http.StatusUnauthorized)
-			return
-		}
-
-		token, err := jwt.ParseWithClaims(tokenString, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
-			return []byte(os.Getenv("APP_KEY")), nil
-		})
-
-		if err != nil {
-			c.AbortWithStatus(http.StatusUnauthorized)
-			return
-		}
-
-		fmt.Print(token.Claims)
 
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{
 			"title":   "Home",
