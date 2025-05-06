@@ -12,5 +12,5 @@ type User struct {
 	Username  string          `json:"username"`
 	Email     string          `json:"email"`
 	Password  string          `json:"password"`
-	AuthLevel utils.AuthLevel `json:"auth_level"`
+	AuthLevel utils.AuthLevel `json:"auth_level" gorm:"default:1"`
 }
