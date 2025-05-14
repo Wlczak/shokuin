@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
+	"time"
 	"wlczak/shokuin/database"
 	"wlczak/shokuin/logger"
 	"wlczak/shokuin/routes/auth"
@@ -115,15 +117,19 @@ func main() {
 		zap.Fatal(err.Error())
 	}
 
-	r := setupRouter()
-
-	d, err := database.GetDB()
-
-	if err != nil {
-		zap.Error(err.Error())
+	for {
+		d, err := database.GetDB()
+		if err != nil {
+			zap.Error(err.Error())
+			fmt.Println("DB didn't connect properly - retrying in 5s")
+			time.Sleep(time.Second * 5)
+		} else {
+			d.Setup()
+			break
+		}
 	}
 
-	d.Setup()
+	r := setupRouter()
 
 	// Listen and Server in 0.0.0.0:8080
 	err = r.Run(":8080")
