@@ -68,5 +68,21 @@ func SetupRouter() *gin.Engine {
 		forms.GET("/additem", form.HandleAddItem)
 	}
 
+	apig := r.Group("/api")
+	{
+		apig.Use(middleware.ApiAuth(utils.AuthLevelUser))
+		apig.POST("/additem", api.AddItemApi)
+
+		apig.Match([]string{"GET"}, "/*any", func(c *gin.Context) {
+			routes := r.Routes()
+			c.Header("Content-Type", "text/html")
+			for _, route := range routes {
+				if strings.HasPrefix(route.Path, c.Request.RequestURI) && route.Path != "/api/*any" {
+					c.String(http.StatusOK, fmt.Sprintf("<a href=\"%s\">%s</a><br>", route.Path, route.Path))
+				}
+			}
+		})
+	}
+
 	return r
 }
