@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 	"wlczak/shokuin/routes/auth"
+	"wlczak/shokuin/routes/form"
 	"wlczak/shokuin/utils"
 
 	"github.com/gin-gonic/gin"
@@ -56,5 +57,12 @@ func SetupRouter() *gin.Engine {
 	r.Group("/user", auth.AuthMiddleware(utils.AuthLevelUser)).GET("/", func(c *gin.Context) {
 		c.String(http.StatusOK, "user")
 	})
+
+	forms := r.Group("/form")
+	{
+		forms.Use(auth.AuthMiddleware(utils.AuthLevelUser))
+		forms.GET("/additem", form.HandleAddItem)
+	}
+
 	return r
 }
