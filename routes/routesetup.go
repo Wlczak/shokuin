@@ -1,7 +1,11 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
+	"wlczak/shokuin/middleware"
+	"wlczak/shokuin/routes/api"
 	"wlczak/shokuin/routes/auth"
 	"wlczak/shokuin/routes/form"
 	"wlczak/shokuin/utils"
@@ -34,7 +38,7 @@ func SetupRouter() *gin.Engine {
 
 	g1 := r.Group("/")
 	{
-		g1.Use(auth.AuthMiddleware(utils.AuthLevelNone))
+		g1.Use(middleware.Auth(utils.AuthLevelNone))
 		g1.GET("/", func(c *gin.Context) {
 
 			c.HTML(http.StatusOK, "index.tmpl", gin.H{
@@ -50,17 +54,17 @@ func SetupRouter() *gin.Engine {
 	r.GET("/login", auth.HandleLogin)
 	r.POST("/login", auth.HandleLoginPost)
 
-	r.Group("/admin", auth.AuthMiddleware(utils.AuthLevelAdmin)).GET("/", func(c *gin.Context) {
+	r.Group("/admin", middleware.Auth(utils.AuthLevelAdmin)).GET("/", func(c *gin.Context) {
 		c.String(http.StatusOK, "admin")
 	})
 
-	r.Group("/user", auth.AuthMiddleware(utils.AuthLevelUser)).GET("/", func(c *gin.Context) {
+	r.Group("/user", middleware.Auth(utils.AuthLevelUser)).GET("/", func(c *gin.Context) {
 		c.String(http.StatusOK, "user")
 	})
 
 	forms := r.Group("/form")
 	{
-		forms.Use(auth.AuthMiddleware(utils.AuthLevelUser))
+		forms.Use(middleware.Auth(utils.AuthLevelUser))
 		forms.GET("/additem", form.HandleAddItem)
 	}
 
