@@ -81,6 +81,7 @@ func SetupRouter() *gin.Engine {
 			}
 		})
 		apig.POST("/additem", api.AddItemApi)
+		apig.POST("/additemtemplate", api.AddItemTemplateApi)
 
 	}
 
