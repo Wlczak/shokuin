@@ -71,8 +71,6 @@ func SetupRouter() *gin.Engine {
 	apig := r.Group("/api")
 	{
 		apig.Use(middleware.ApiAuth(utils.AuthLevelUser))
-		apig.POST("/additem", api.AddItemApi)
-
 		apig.Match([]string{"GET"}, "/*any", func(c *gin.Context) {
 			routes := r.Routes()
 			c.Header("Content-Type", "text/html")
@@ -82,6 +80,8 @@ func SetupRouter() *gin.Engine {
 				}
 			}
 		})
+		apig.POST("/additem", api.AddItemApi)
+
 	}
 
 	return r
