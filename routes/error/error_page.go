@@ -1,4 +1,4 @@
-package error_page
+package error_handler
 
 import (
 	"net/http"
