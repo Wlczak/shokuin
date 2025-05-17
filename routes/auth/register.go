@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"wlczak/shokuin/database/model"
 	"wlczak/shokuin/database/schema"
-	error_page "wlczak/shokuin/routes/error"
+	error_page "wlczak/shokuin/routes/error_handler"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
