@@ -2,19 +2,16 @@ package api
 
 import (
 	"net/http"
+
+	api_schema "wlczak/shokuin/routes/api/schema"
 	"wlczak/shokuin/routes/error_handl"
 
 	"github.com/gin-gonic/gin"
 )
 
-type AddItem struct {
-	Name  string `json:"name"`
-	Price int32  `json:"price"`
-}
-
 func AddItemApi(c *gin.Context) {
 
-	var additem AddItem
+	var additem api_schema.AddItem
 	err := c.ShouldBindJSON(&additem)
 	if err != nil {
 		error_handl.WriteErrorJson(c, err)
