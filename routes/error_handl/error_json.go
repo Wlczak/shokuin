@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func WriteErrorJson(c *gin.Context, err error) {
+func HandleErrorJson(c *gin.Context, err error) {
 	zap := logger.GetLogger()
 	zap.Error(err.Error())
 

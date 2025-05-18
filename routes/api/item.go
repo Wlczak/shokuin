@@ -14,7 +14,7 @@ func AddItemApi(c *gin.Context) {
 	var additem api_schema.AddItem
 	err := c.ShouldBindJSON(&additem)
 	if err != nil {
-		error_handl.WriteErrorJson(c, err)
+		error_handl.HandleErrorJson(c, err)
 
 		return
 	}
