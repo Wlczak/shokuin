@@ -2,30 +2,165 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     {{ template "styles" . }}
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <title>{{ .title }}</title>
+    <style>
+        :root{
+            --accent-1: #6a5cff;
+            --accent-2: #4ad9d9;
+            --glass: rgba(255,255,255,0.06);
+            --card-bg: rgba(255,255,255,0.04);
+            --muted: rgba(255,255,255,0.85);
+        }
+        html,body{height:100%}
+        body{
+            margin:0;
+            font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: linear-gradient(135deg, #0f172a 0%, #071033 40%, #041022 100%);
+            color:#fff;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+        }
+        .hero-wrap{
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:3rem 1.5rem;
+        }
+        .auth-card{
+            width:100%;
+            max-width:920px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+            border-radius:16px;
+            box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+            overflow:hidden;
+            display:flex;
+            gap:0;
+            align-items:stretch;
+        }
+        .auth-left{
+            padding:48px;
+            flex:1.05;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            background:
+                radial-gradient(600px 200px at 10% 0%, rgba(106,92,255,0.12), transparent 12%),
+                radial-gradient(500px 180px at 100% 100%, rgba(74,217,217,0.06), transparent 12%);
+        }
+        .auth-right{
+            flex:0.9;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:28px;
+            background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+        }
+        h1{font-size:2.2rem; line-height:1.04; margin:0 0 8px; font-weight:800}
+        p.lead{margin:0 0 22px; color:rgba(255,255,255,0.85); font-size:1.05rem}
+        .form-wrap{width:100%; max-width:360px; background:rgba(255,255,255,0.02); padding:26px; border-radius:12px; box-shadow:0 6px 18px rgba(2,6,23,0.5)}
+        .form-title{font-size:1.1rem; margin-bottom:12px; font-weight:700}
+        .field{display:flex; flex-direction:column; gap:8px; margin-bottom:14px}
+        label{font-size:0.9rem; color:rgba(255,255,255,0.85)}
+        input[type="text"], input[type="email"], input[type="password"]{
+            padding:12px 14px;
+            border-radius:10px;
+            border:1px solid rgba(255,255,255,0.06);
+            background:rgba(255,255,255,0.02);
+            color:#fff;
+            outline:none;
+            font-size:0.95rem;
+        }
+        input::placeholder{color:rgba(255,255,255,0.45)}
+        .btn{
+            padding:12px 18px;
+            border-radius:10px;
+            font-weight:700;
+            border:0;
+            cursor:pointer;
+            text-decoration:none;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+        }
+        .btn-register{
+            background:linear-gradient(90deg,var(--accent-1), #5ab0ff);
+            color:#fff;
+            box-shadow:0 8px 22px rgba(106,92,255,0.16);
+            width:100%;
+        }
+        .btn-ghost{
+            background:transparent;
+            color:var(--muted);
+            border:1px solid rgba(255,255,255,0.08);
+            width:100%;
+        }
+        .helper-row{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:12px}
+        .small{font-size:0.9rem; color:rgba(255,255,255,0.75)}
+        .link{color:var(--muted); text-decoration:none; font-weight:600}
+        footer{width:100%; padding:18px 24px; text-align:center; font-size:0.9rem; color:rgba(255,255,255,0.6); margin-top:18px}
+        @media (max-width:900px){
+            .auth-card{flex-direction:column; border-radius:14px}
+            .auth-right{order:2; padding:18px}
+            .auth-left{order:1; padding:28px}
+            h1{font-size:1.6rem}
+        }
+    </style>
 </head>
 
 <body>
-    <div class="columns is-vcentered" style="height: 100vh;">
-
-        <div class="column"></div>
-        <div class="column is-half">
-            {{ .message }}
-            <div class="box is-align is-centered">
-                <form action="" method="post">
-                    <input type="text" name="username">
-                    <input type="password" name="password">
-                    <input type="password" name="password-repeat">
-                    <button type="submit">Register</button>
-                </form>
+    <main class="hero-wrap">
+        <section class="auth-card" role="region" aria-label="Registration card">
+            <div class="auth-left" aria-hidden="true">
+                <h1>{{ .title }}</h1>
+                <p class="lead">Create your account and start using the platform. Registration takes less than a minute.</p>
+                <div style="display:flex;gap:12px;margin-top:18px;">
+                    <a class="btn" href="/" style="background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);border-radius:10px;padding:10px 14px;text-decoration:none;font-weight:700">Home</a>
+                    <a class="btn" href="/login" style="background:linear-gradient(90deg,var(--accent-1), #5ab0ff);color:#fff;border-radius:10px;padding:10px 14px;text-decoration:none;font-weight:700">Login</a>
+                </div>
             </div>
-        </div>
-        <div class="column"></div>
 
-    </div>
+            <div class="auth-right">
+                <div class="form-wrap" role="form" aria-labelledby="register-heading">
+                    <div id="register-heading" class="form-title">Create an account</div>
+                    {{ .message }}
+                    <form action="/register" method="post" autocomplete="on">
+                        <div class="field">
+                            <label for="username">Username</label>
+                            <input id="username" name="username" type="text" placeholder="Choose a username" required>
+                        </div>
+                        <div class="field">
+                            <label for="email">Email</label>
+                            <input id="email" name="email" type="email" placeholder="you@domain.com" required>
+                        </div>
+                        <div class="field">
+                            <label for="password">Password</label>
+                            <input id="password" name="password" type="password" placeholder="••••••••" required>
+                        </div>
+                        <div class="field">
+                            <label for="password-repeat">Confirm password</label>
+                            <input id="password-repeat" name="password-repeat" type="password" placeholder="••••••••" required>
+                        </div>
+                        <div class="field">
+                            <button class="btn btn-register" type="submit">Register</button>
+                        </div>
+                        <div class="helper-row">
+                            <span class="small">By registering you agree to the terms.</span>
+                            <a class="link" href="/login">Already have an account?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>© <span id="year"></span> {{ .title }}</footer>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 
 </html>
