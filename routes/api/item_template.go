@@ -18,7 +18,7 @@ func HandleItemTemplateApi(c *gin.RouterGroup) {
 
 func AddItemTemplateApi(c *gin.Context) {
 	var response api_schema.Response
-	var request api_schema.ItemTemplate
+	var request schema.ItemTemplate
 
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
@@ -26,8 +26,7 @@ func AddItemTemplateApi(c *gin.Context) {
 		return
 	}
 
-	var itemTemplateSchema schema.ItemTemplate
-	err = model.IsItemTemplateOverlap(&itemTemplateSchema)
+	err = model.IsItemTemplateOverlap(&request)
 
 	if err != nil {
 		error_handl.HandleErrorJson(c, err)
@@ -42,14 +41,7 @@ func AddItemTemplateApi(c *gin.Context) {
 		panic(err)
 	}
 
-	templateModel := &schema.ItemTemplate{
-		Name:     request.Name,
-		Barcode:  request.Barcode,
-		Category: request.Category,
-		Image:    request.Image,
-	}
-
-	err = db.DB.Create(&templateModel).Error
+	err = db.DB.Create(&request).Error
 	if err != nil {
 		zap := logger.GetLogger()
 		zap.Error(err.Error())
@@ -60,5 +52,6 @@ func AddItemTemplateApi(c *gin.Context) {
 	response.Success = true
 	response.Message = "Item template added successfully"
 	response.Code = http.StatusOK
+
 	c.JSON(response.Code, response)
 }
