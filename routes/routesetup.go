@@ -58,7 +58,9 @@ func SetupRouter() *gin.Engine {
 		c.String(http.StatusOK, "admin")
 	})
 
-	r.Group("/user", middleware.Auth(utils.AuthLevelUser)).GET("/", func(c *gin.Context) {
+	userGr := r.Group("/user", middleware.Auth(utils.AuthLevelUser))
+
+	userGr.GET("/", func(c *gin.Context) {
 		c.String(http.StatusOK, "user")
 	})
 
@@ -81,7 +83,8 @@ func SetupRouter() *gin.Engine {
 			}
 		})
 		apig.POST("/additem", api.AddItemApi)
-		apig.POST("/additemtemplate", api.AddItemTemplateApi)
+
+		api.HandleItemTemplateApi(apig.Group("/itemtemplate", middleware.ApiAuth(utils.AuthLevelUser)))
 
 	}
 
