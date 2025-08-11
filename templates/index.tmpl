@@ -2,22 +2,146 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     {{ template "styles" . }}
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <title>{{ .title }}</title>
+    <style>
+        :root{
+            --accent-1: #6a5cff;
+            --accent-2: #4ad9d9;
+            --glass: rgba(255,255,255,0.06);
+            --card-bg: rgba(255,255,255,0.06);
+            --muted: rgba(255,255,255,0.85);
+        }
+        html,body{height:100%}
+        body{
+            margin:0;
+            font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: linear-gradient(135deg, #0f172a 0%, #071033 40%, #041022 100%);
+            color:#fff;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+        }
+        .hero-wrap{
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:3rem 1.5rem;
+        }
+        .card-landing{
+            width:100%;
+            max-width:1100px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+            border-radius:16px;
+            box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+            overflow:hidden;
+            display:flex;
+            gap:0;
+            align-items:stretch;
+        }
+        .left{
+            padding:48px;
+            flex:1.05;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            background:
+                radial-gradient(600px 200px at 10% 0%, rgba(106,92,255,0.12), transparent 12%),
+                radial-gradient(500px 180px at 100% 100%, rgba(74,217,217,0.06), transparent 12%);
+        }
+        .right{
+            flex:0.9;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:28px;
+            background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+        }
+        h1{font-size:2.2rem; line-height:1.04; margin:0 0 8px; font-weight:800}
+        p.lead{margin:0 0 22px; color:rgba(255,255,255,0.85); font-size:1.05rem}
+        .btn-row{display:flex; gap:12px; align-items:center; margin-top:14px}
+        .cta-primary{
+            padding:12px 22px;
+            border-radius:10px;
+            font-weight:600;
+            background:linear-gradient(90deg,var(--accent-1), #5ab0ff);
+            color:#fff;
+            border:0;
+            box-shadow:0 6px 18px rgba(106,92,255,0.18);
+            text-decoration:none;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+        }
+        .cta-secondary{
+            padding:10px 18px;
+            border-radius:10px;
+            background:transparent;
+            color:var(--muted);
+            border:1px solid rgba(255,255,255,0.08);
+            text-decoration:none;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:600;
+        }
+        .features{display:flex; gap:18px; margin-top:28px; flex-wrap:wrap}
+        .feature{background:var(--card-bg); padding:12px 14px; border-radius:10px; font-size:0.92rem; color:rgba(255,255,255,0.92)}
+        .illustration{width:100%; max-width:420px; height:auto}
+        footer{width:100%; padding:18px 24px; text-align:center; font-size:0.9rem; color:rgba(255,255,255,0.6)}
+        @media (max-width:900px){
+            .card-landing{flex-direction:column; border-radius:14px}
+            .right{order:2; padding:18px}
+            .left{order:1; padding:28px}
+            h1{font-size:1.6rem}
+        }
+    </style>
 </head>
 
 <body>
-    <div class="columns is-vcentered" style="height: 100vh;">
-
-        <div class="column"></div>
-        <div class="column is-half">
-            homepage
-        </div>
-        <div class="column"></div>
-
-    </div>
+    <main class="hero-wrap">
+        <section class="card-landing" role="region" aria-label="Landing card">
+            <div class="left">
+                <h1>{{ .title }}</h1>
+                <p class="lead">Welcome — start building faster with a clean, focused dashboard. Sign in to continue or create a new account to get started.</p>
+                <div class="btn-row">
+                    <a class="cta-primary" href="/login">Log in</a>
+                    <a class="cta-secondary" href="/register">Register</a>
+                </div>
+                <div class="features" aria-hidden="true">
+                    <div class="feature">Fast setup</div>
+                    <div class="feature">Real-time updates</div>
+                    <div class="feature">Secure auth</div>
+                </div>
+            </div>
+            <div class="right" aria-hidden="true">
+                <svg class="illustration" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Decorative illustration">
+                    <rect x="0" y="0" width="800" height="600" rx="18" fill="url(#g)"/>
+                    <g opacity="0.95">
+                        <circle cx="160" cy="160" r="100" fill="rgba(255,255,255,0.06)"/>
+                        <rect x="320" y="120" width="340" height="240" rx="18" fill="rgba(255,255,255,0.03)"/>
+                        <rect x="360" y="160" width="260" height="28" rx="6" fill="rgba(255,255,255,0.12)"/>
+                        <rect x="360" y="200" width="220" height="18" rx="6" fill="rgba(255,255,255,0.06)"/>
+                        <rect x="360" y="240" width="200" height="18" rx="6" fill="rgba(255,255,255,0.06)"/>
+                        <rect x="380" y="300" width="160" height="14" rx="6" fill="rgba(74,217,217,0.13)"/>
+                    </g>
+                    <defs>
+                        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#071033"/>
+                            <stop offset="1" stop-color="#041022"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+        </section>
+    </main>
+    <footer>© <span id="year"></span> {{ .title }}</footer>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 
 </html>

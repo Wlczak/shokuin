@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"net/http"
+	"os"
 	"time"
 	"wlczak/shokuin/database/model"
 	"wlczak/shokuin/database/schema"
@@ -47,10 +48,19 @@ func HandleLoginPost(c *gin.Context) {
 
 	authLevel := model.GetUserLevelByUsername(&schema.User{Username: username})
 
+	jwt_exp := os.Getenv("JWT_EXPIRATION")
+	jwt_dur, err := time.ParseDuration(jwt_exp + "h")
+	if err != nil {
+		zap := logger.GetLogger()
+		zap.Error(err.Error())
+		jwt_dur = time.Hour
+	}
+	exp := time.Now().Add(jwt_dur)
+
 	token, err := utils.GenToken(jwt.MapClaims{
 		"username":   username,
 		"time":       time.Now().Unix(),
-		"exp":        time.Now().Add(time.Hour).Unix(),
+		"exp":        exp.Unix(),
 		"auth_level": authLevel,
 	})
 

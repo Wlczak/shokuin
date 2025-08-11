@@ -10,18 +10,17 @@ jobs:
     build-and-test:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Set up Go
               uses: actions/setup-go@v4
               with:
-                  go-version: "1.24.2"
+                  go-version: "1.24.6"
 
             - name: Tidy modules
               run: |
                   go mod tidy
                   go mod verify
-
             - name: golangci-lint
               uses: golangci/golangci-lint-action@v8
               with:
@@ -48,8 +47,5 @@ jobs:
             - name: govulncheck
               uses: golang/govulncheck-action@v1
               with:
-                  go-version-input: 1.24.2
+                  go-version-input: 1.24.6
                   go-package: ./...
-
-            # - name: Govulncheck
-            #   run: govulncheck ./...

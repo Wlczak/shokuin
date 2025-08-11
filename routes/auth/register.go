@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"wlczak/shokuin/database/model"
 	"wlczak/shokuin/database/schema"
-	error_page "wlczak/shokuin/routes/error"
+	"wlczak/shokuin/routes/error_handl"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -43,7 +43,7 @@ func HandleRegisterPost(c *gin.Context) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
 	if err != nil {
-		error_page.WriteErrorPage(c, err)
+		error_handl.WriteErrorPage(c, err)
 		return
 	}
 

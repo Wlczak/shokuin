@@ -1,4 +1,4 @@
-package auth
+package middleware
 
 import (
 	"net/http"
@@ -8,7 +8,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AuthMiddleware(lvl utils.AuthLevel) gin.HandlerFunc {
+func Auth(lvl utils.AuthLevel) gin.HandlerFunc {
+	return auth(lvl, false)
+}
+
+func ApiAuth(lvl utils.AuthLevel) gin.HandlerFunc {
+	return auth(lvl, true)
+}
+
+func auth(lvl utils.AuthLevel, isApi bool) gin.HandlerFunc {
 	switch lvl {
 	case utils.AuthLevelNone:
 		return func(c *gin.Context) {
@@ -21,7 +29,7 @@ func AuthMiddleware(lvl utils.AuthLevel) gin.HandlerFunc {
 			zap := logger.GetLogger()
 			if err != nil {
 				zap.Error(err.Error())
-				c.Redirect(http.StatusTemporaryRedirect, "/login")
+				redirect(c, isApi)
 				c.Abort()
 				return
 			}
@@ -30,13 +38,13 @@ func AuthMiddleware(lvl utils.AuthLevel) gin.HandlerFunc {
 
 			if err != nil {
 				zap.Error(err.Error())
-				c.Redirect(http.StatusTemporaryRedirect, "/login")
+				redirect(c, isApi)
 				c.Abort()
 				return
 			}
 
 			if claims.Auth_level == 0 {
-				c.Redirect(http.StatusTemporaryRedirect, "/login")
+				redirect(c, isApi)
 				c.Abort()
 				return
 			}
@@ -44,7 +52,7 @@ func AuthMiddleware(lvl utils.AuthLevel) gin.HandlerFunc {
 			authLevel := claims.Auth_level
 
 			if authLevel < utils.AuthLevelUser {
-				c.Redirect(http.StatusTemporaryRedirect, "/login")
+				redirect(c, isApi)
 				c.Abort()
 				return
 			}
@@ -56,7 +64,7 @@ func AuthMiddleware(lvl utils.AuthLevel) gin.HandlerFunc {
 			zap := logger.GetLogger()
 			if err != nil {
 				zap.Error(err.Error())
-				c.Redirect(http.StatusTemporaryRedirect, "/login")
+				redirect(c, isApi)
 				c.Abort()
 				return
 			}
@@ -65,13 +73,13 @@ func AuthMiddleware(lvl utils.AuthLevel) gin.HandlerFunc {
 
 			if err != nil {
 				zap.Error(err.Error())
-				c.Redirect(http.StatusTemporaryRedirect, "/login")
+				redirect(c, isApi)
 				c.Abort()
 				return
 			}
 
 			if claims.Auth_level == 0 {
-				c.Redirect(http.StatusTemporaryRedirect, "/login")
+				redirect(c, isApi)
 				c.Abort()
 				return
 			}
@@ -79,7 +87,7 @@ func AuthMiddleware(lvl utils.AuthLevel) gin.HandlerFunc {
 			authLevel := claims.Auth_level
 
 			if authLevel < utils.AuthLevelAdmin {
-				c.Redirect(http.StatusTemporaryRedirect, "/login")
+				redirect(c, isApi)
 				c.Abort()
 				return
 			}
@@ -87,8 +95,21 @@ func AuthMiddleware(lvl utils.AuthLevel) gin.HandlerFunc {
 
 	default:
 		return func(c *gin.Context) {
-			c.Redirect(http.StatusTemporaryRedirect, "/login")
+			redirect(c, isApi)
 		}
 
 	}
+}
+
+func redirect(c *gin.Context, isApi bool) {
+	if isApi {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Unauthorized",
+		})
+		return
+	} else {
+
+		c.Redirect(http.StatusTemporaryRedirect, "/login")
+	}
+
 }
