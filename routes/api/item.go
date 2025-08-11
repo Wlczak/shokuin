@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"time"
 
 	"wlczak/shokuin/database"
 	"wlczak/shokuin/database/schema"
@@ -25,6 +26,15 @@ func AddItemApi(c *gin.Context) {
 		error_handl.HandleErrorJson(c, err)
 		return
 	}
+
+	if request.ExpiryDate.Before(time.Now().Add(-time.Hour * 24 * 30)) {
+		response.Success = false
+		response.Message = "expiry date is broken"
+		c.JSON(response.Code, response)
+		return
+	}
+
+	// @todo add template id check
 
 	db, err := database.GetDB()
 
