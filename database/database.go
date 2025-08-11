@@ -45,4 +45,12 @@ func (d Connection) Setup() {
 		zap.Error(err.Error())
 		panic(err)
 	}
+
+	err = d.DB.AutoMigrate(&schema.Item{})
+
+	if err != nil {
+		zap := logger.GetLogger()
+		zap.Error(err.Error())
+		panic(err)
+	}
 }

@@ -82,7 +82,7 @@ func SetupRouter() *gin.Engine {
 				}
 			}
 		})
-		apig.POST("/additem", api.AddItemApi)
+		api.HandleItemApi(apig.Group("/item", middleware.ApiAuth(utils.AuthLevelUser)))
 
 		api.HandleItemTemplateApi(apig.Group("/itemtemplate", middleware.ApiAuth(utils.AuthLevelUser)))
 
