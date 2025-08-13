@@ -15,7 +15,7 @@ jobs:
             - name: Set up Go
               uses: actions/setup-go@v4
               with:
-                  go-version: "1.24.6"
+                  go-version: "1.25.0"
 
             - name: Tidy modules
               run: |
@@ -25,6 +25,7 @@ jobs:
               uses: golangci/golangci-lint-action@v8
               with:
                   version: latest
+                  install-mode: goinstall
 
             - name: Fmt
               run: go fmt ./...
@@ -47,5 +48,5 @@ jobs:
             - name: govulncheck
               uses: golang/govulncheck-action@v1
               with:
-                  go-version-input: 1.24.6
+                  go-version-input: 1.25.0
                   go-package: ./...
