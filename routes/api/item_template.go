@@ -81,11 +81,23 @@ func GetItemTemplateByBarcodeApi(c *gin.Context) {
 		panic(err)
 	}
 
-	err = db.DB.Where("barcode = ?", request.Barcode).First(&itemTemplate).Error
-	if err != nil {
-		zap := logger.GetLogger()
-		zap.Error(err.Error())
-		error_handl.HandleErrorJson(c, err)
+	var count int64
+	db.DB.Where("barcode = ?", request.Barcode).Count(&count)
+
+	if count != 0 {
+
+		err = db.DB.Where("barcode = ?", request.Barcode).First(&itemTemplate).Error
+		if err != nil {
+			zap := logger.GetLogger()
+			zap.Error(err.Error())
+			error_handl.HandleErrorJson(c, err)
+			return
+		}
+	} else {
+		response.Success = false
+		response.Message = "Item template not found"
+		response.Code = http.StatusNotFound
+		c.JSON(response.Code, response)
 		return
 	}
 

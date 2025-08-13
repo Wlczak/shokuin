@@ -72,7 +72,6 @@ func SetupRouter() *gin.Engine {
 
 	apig := r.Group("/api")
 	{
-		apig.Use(middleware.ApiAuth(utils.AuthLevelUser))
 		apig.Match([]string{"GET"}, "/*any", func(c *gin.Context) {
 			routes := r.Routes()
 			c.Header("Content-Type", "text/html")
@@ -82,9 +81,9 @@ func SetupRouter() *gin.Engine {
 				}
 			}
 		})
-		api.HandleItemApi(apig.Group("/item", middleware.ApiAuth(utils.AuthLevelUser)))
+		api.HandleItemApi(apig.Group("/item", middleware.ApiAuth(utils.AuthLevelNone)))
 
-		api.HandleItemTemplateApi(apig.Group("/itemtemplate", middleware.ApiAuth(utils.AuthLevelUser)))
+		api.HandleItemTemplateApi(apig.Group("/itemtemplate", middleware.ApiAuth(utils.AuthLevelNone)))
 
 	}
 
