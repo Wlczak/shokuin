@@ -82,10 +82,15 @@ func GetItemTemplateByBarcodeApi(c *gin.Context) {
 	}
 
 	var count int64
-	db.DB.Where("barcode = ?", request.Barcode).Count(&count)
+	db.DB.Model(&schema.ItemTemplate{}).Where("barcode = ?", request.Barcode).Count(&count)
 
-	if count != 0 {
-
+	if count == 0 {
+		response.Success = false
+		response.Message = "Item template not found"
+		response.Code = http.StatusNotFound
+		c.JSON(response.Code, response)
+		return
+	} else {
 		err = db.DB.Where("barcode = ?", request.Barcode).First(&itemTemplate).Error
 		if err != nil {
 			zap := logger.GetLogger()
@@ -93,12 +98,6 @@ func GetItemTemplateByBarcodeApi(c *gin.Context) {
 			error_handl.HandleErrorJson(c, err)
 			return
 		}
-	} else {
-		response.Success = false
-		response.Message = "Item template not found"
-		response.Code = http.StatusNotFound
-		c.JSON(response.Code, response)
-		return
 	}
 
 	response.Success = true
