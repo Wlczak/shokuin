@@ -72,11 +72,13 @@ func SetupRouter() *gin.Engine {
 
 	apig := r.Group("/api")
 	{
-		apig.Match([]string{"GET"}, "/*any", func(c *gin.Context) {
+		apig.Match([]string{"GET"}, "/help/*any", func(c *gin.Context) {
 			routes := r.Routes()
 			c.Header("Content-Type", "text/html")
+			requestUri := strings.Replace(c.Request.RequestURI, "/api/help", "/api", 1)
+
 			for _, route := range routes {
-				if strings.HasPrefix(route.Path, c.Request.RequestURI) && route.Path != "/api/*any" {
+				if strings.HasPrefix(route.Path, requestUri) && route.Path != "/api/*any" {
 					c.String(http.StatusOK, fmt.Sprintf("<a href=\"%s\">%s</a><br>", route.Path, route.Path))
 				}
 			}
