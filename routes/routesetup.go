@@ -85,7 +85,7 @@ func SetupRouter() *gin.Engine {
 
 		api.HandleItemTemplateApi(apig.Group("/itemtemplate", middleware.ApiAuth(utils.AuthLevelNone)))
 
-		api.HandleImageUploadApi(apig.Group("/imageupload", middleware.ApiAuth(utils.AuthLevelNone)))
+		api.HandleImageUploadApi(apig.Group("/image", middleware.ApiAuth(utils.AuthLevelNone)))
 	}
 
 	return r
