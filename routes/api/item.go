@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"wlczak/shokuin/database"
@@ -84,6 +85,32 @@ func (a *ApiController) AddItemApi(c *gin.Context) {
 	}
 
 	db.DB.Create(&request)
+
+	c.JSON(http.StatusNoContent, nil)
+}
+
+func (a *ApiController) DeleteItem(c *gin.Context) {
+	stringId := c.Param("id")
+
+	id, err := strconv.Atoi(stringId)
+
+	if err != nil {
+		c.JSON(http.StatusNotModified, nil)
+		return
+	}
+
+	db, err := database.GetDB()
+
+	if err != nil {
+		zap := logger.GetLogger()
+		zap.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, nil)
+	}
+
+	var dbitem = &schema.Item{}
+	dbitem.ID = uint(id)
+
+	db.DB.Where("id = ?", id).Delete(dbitem)
 
 	c.JSON(http.StatusNoContent, nil)
 }
