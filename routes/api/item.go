@@ -26,6 +26,10 @@ import (
 // @Router /item/{id} [get]
 func (a *ApiController) GetItemApi(c *gin.Context) {
 	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, nil)
+		return
+	}
 
 	db, err := database.GetDB()
 
@@ -89,8 +93,24 @@ func (a *ApiController) AddItemApi(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-func (a *ApiController) DeleteItem(c *gin.Context) {
+// DeleteItemApi deletes the item with the given id
+// @Summary Delete an item
+// @Description Deletes the item with the given id
+// @Tags item
+// @Accept json
+// @Produce json
+// @Param id path string true "Item ID"
+// @Success 204 "Succesfully deleted (no content)"
+// @Failure 400 "Invalid request body"
+// @Failure 404 "Item not found"
+// @Router /item/{id} [delete]
+func (a *ApiController) DeleteItemApi(c *gin.Context) {
 	stringId := c.Param("id")
+
+	if stringId == "" {
+		c.JSON(http.StatusBadRequest, nil)
+		return
+	}
 
 	id, err := strconv.Atoi(stringId)
 
@@ -108,9 +128,15 @@ func (a *ApiController) DeleteItem(c *gin.Context) {
 	}
 
 	var dbitem = &schema.Item{}
-	dbitem.ID = uint(id)
 
-	db.DB.Where("id = ?", id).Delete(dbitem)
+	db.DB.Where("id = ?", id).First(dbitem)
+
+	if dbitem.ID == 0 {
+		c.JSON(http.StatusNotFound, nil)
+		return
+	}
+
+	db.DB.Delete(dbitem)
 
 	c.JSON(http.StatusNoContent, nil)
 }

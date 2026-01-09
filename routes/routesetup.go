@@ -63,8 +63,9 @@ func SetupRouter() *gin.Engine {
 		c := api.ApiController{}
 		item := apiv1.Group("/item")
 		{
-			item.GET("", c.GetItemApi)
-			item.POST(":id", c.AddItemApi)
+			item.GET(":id", c.GetItemApi)
+			item.POST("", c.AddItemApi)
+			item.DELETE(":id", c.DeleteItemApi)
 		}
 	}
 
