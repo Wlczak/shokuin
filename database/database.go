@@ -4,7 +4,7 @@ import (
 	"wlczak/shokuin/database/schema"
 	"wlczak/shokuin/logger"
 
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -13,8 +13,8 @@ type Connection struct {
 }
 
 func GetDB() (Connection, error) {
-	dsn := "host=localhost user=gorm password=gorm dbname=gorm port=5432 sslmode=disable TimeZone=Europe/Prague"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+	db, err := gorm.Open(sqlite.Open("shokuin.db"), &gorm.Config{})
 
 	if err != nil {
 		return Connection{DB: nil}, err
