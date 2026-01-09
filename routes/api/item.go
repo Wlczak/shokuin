@@ -16,7 +16,7 @@ import (
 // GetItemApi returns the item with the given id
 // @Summary Get an item
 // @Description Returns the item with the given id
-// @Tags item
+// @Tags Item
 // @Accept json
 // @Produce json
 // @Param id path string true "Item ID"
@@ -38,6 +38,7 @@ func (a *ApiController) GetItemApi(c *gin.Context) {
 		zap := logger.GetLogger()
 		zap.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, nil)
+		return
 	}
 
 	var dbitem schema.Item
@@ -57,7 +58,7 @@ func (a *ApiController) GetItemApi(c *gin.Context) {
 // AddItemApi adds a new item to the database
 // @Summary Add a new item
 // @Description Adds a new item. The expiry date must not be older than 30 days.
-// @Tags item
+// @Tags Item
 // @Accept json
 // @Produce json
 // @Param item body api_schema.Item true "Item to add"
@@ -86,6 +87,7 @@ func (a *ApiController) AddItemApi(c *gin.Context) {
 		zap := logger.GetLogger()
 		zap.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, nil)
+		return
 	}
 
 	db.DB.Create(&request)
@@ -96,7 +98,7 @@ func (a *ApiController) AddItemApi(c *gin.Context) {
 // DeleteItemApi deletes the item with the given id
 // @Summary Delete an item
 // @Description Deletes the item with the given id
-// @Tags item
+// @Tags Item
 // @Accept json
 // @Produce json
 // @Param id path string true "Item ID"
@@ -125,6 +127,7 @@ func (a *ApiController) DeleteItemApi(c *gin.Context) {
 		zap := logger.GetLogger()
 		zap.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, nil)
+		return
 	}
 
 	var dbitem = &schema.Item{}
@@ -144,7 +147,7 @@ func (a *ApiController) DeleteItemApi(c *gin.Context) {
 // PatchItemApi updates the item with the given id
 // @Summary Update an item
 // @Description Updates the item with the given id
-// @Tags item
+// @Tags Item
 // @Accept json
 // @Produce json
 // @Param id path string true "Item ID"
