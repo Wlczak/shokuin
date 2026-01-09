@@ -12,13 +12,44 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func HandleItemTemplateApi(c *gin.RouterGroup) {
-	c.POST("/create", AddItemTemplateApi)
+// GetItemTemplateApi returns the item template with the given id
+// @Summary Get an item template
+// @Description Returns the item template with the given id
+// @Tags Item template
+// @Accept json
+// @Produce json
+// @Param id path string true "Item template ID"
+// @Success 200 {object} api_schema.ItemTemplate
+// @Failure 400 "Invalid request body"
+// @Failure 404 "Item template not found"
+// @Failure 500 "Internal server error"
+// @Router /item_template/{id} [get]
+func (a *ApiController) GetItemTemplateApi(c *gin.Context) {
+	id := c.Param("id")
 
-	getg := c.Group("/get")
-	{
-		getg.POST("/by_barcode", GetItemTemplateByBarcodeApi)
+	if id == "" {
+		c.JSON(http.StatusBadRequest, nil)
+		return
 	}
+
+	db, err := database.GetDB()
+
+	if err != nil {
+		zap := logger.GetLogger()
+		zap.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	var dbitem schema.ItemTemplate
+	db.DB.Where("id = ?", id).First(&dbitem)
+
+	if dbitem.ID == 0 {
+		c.JSON(http.StatusNotFound, nil)
+		return
+	}
+
+	c.JSON(http.StatusOK, dbitem)
 
 }
 
