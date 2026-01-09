@@ -26,6 +26,7 @@ import (
 // @Failure 500 "Internal server error"
 // @Router /item/{id} [get]
 func (a *ApiController) GetItemApi(c *gin.Context) {
+	zap := logger.GetLogger()
 	id := c.Param("id")
 	if id == "" {
 		c.JSON(http.StatusBadRequest, nil)
@@ -35,14 +36,19 @@ func (a *ApiController) GetItemApi(c *gin.Context) {
 	db, err := database.GetDB()
 
 	if err != nil {
-		zap := logger.GetLogger()
 		zap.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, nil)
 		return
 	}
 
 	var dbitem schema.Item
-	db.DB.Where("id = ?", id).First(&dbitem)
+	err = db.DB.Where("id = ?", id).First(&dbitem).Error
+
+	if err != nil {
+		zap.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
 
 	if dbitem.ID == 0 {
 		c.JSON(http.StatusNotFound, nil)
@@ -68,14 +74,16 @@ func (a *ApiController) GetItemApi(c *gin.Context) {
 // @Router /item [post]
 func (a *ApiController) AddItemApi(c *gin.Context) {
 	var request schema.Item
-
+	zap := logger.GetLogger()
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
+		zap.Error(err.Error())
 		c.JSON(http.StatusBadRequest, nil)
 		return
 	}
 
 	if request.ExpiryDate.Before(time.Now().Add(-time.Hour * 24 * 30)) {
+		c.JSON(http.StatusBadRequest, &api_schema.ErrorMessage{Error: "bad expiry date"})
 		return
 	}
 
@@ -90,7 +98,13 @@ func (a *ApiController) AddItemApi(c *gin.Context) {
 		return
 	}
 
-	db.DB.Create(&request)
+	err = db.DB.Create(&request).Error
+
+	if err != nil {
+		zap.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
 
 	c.JSON(http.StatusNoContent, nil)
 }
@@ -108,7 +122,7 @@ func (a *ApiController) AddItemApi(c *gin.Context) {
 // @Router /item/{id} [delete]
 func (a *ApiController) DeleteItemApi(c *gin.Context) {
 	stringId := c.Param("id")
-
+	zap := logger.GetLogger()
 	if stringId == "" {
 		c.JSON(http.StatusBadRequest, nil)
 		return
@@ -118,13 +132,13 @@ func (a *ApiController) DeleteItemApi(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusNotModified, nil)
+		zap.Error(err.Error())
 		return
 	}
 
 	db, err := database.GetDB()
 
 	if err != nil {
-		zap := logger.GetLogger()
 		zap.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, nil)
 		return
@@ -132,14 +146,26 @@ func (a *ApiController) DeleteItemApi(c *gin.Context) {
 
 	var dbitem = &schema.Item{}
 
-	db.DB.Where("id = ?", id).First(dbitem)
+	err = db.DB.Where("id = ?", id).First(dbitem).Error
+
+	if err != nil {
+		zap.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
 
 	if dbitem.ID == 0 {
 		c.JSON(http.StatusNotFound, nil)
 		return
 	}
 
-	db.DB.Delete(dbitem)
+	err = db.DB.Delete(dbitem).Error
+
+	if err != nil {
+		zap.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
 
 	c.JSON(http.StatusNoContent, nil)
 }
@@ -158,6 +184,7 @@ func (a *ApiController) DeleteItemApi(c *gin.Context) {
 // @Router /item/{id} [patch]
 func (a *ApiController) PatchItemApi(c *gin.Context) {
 	id := c.Param("id")
+	zap := logger.GetLogger()
 
 	if id == "" {
 		c.JSON(http.StatusBadRequest, nil)
@@ -173,7 +200,13 @@ func (a *ApiController) PatchItemApi(c *gin.Context) {
 	}
 
 	var dbitem schema.Item
-	db.DB.Where("id = ?", id).First(&dbitem)
+	err = db.DB.Where("id = ?", id).First(&dbitem).Error
+
+	if err != nil {
+		zap.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
 
 	if dbitem.ID == 0 {
 		c.JSON(http.StatusNotFound, nil)
@@ -191,7 +224,13 @@ func (a *ApiController) PatchItemApi(c *gin.Context) {
 	dbitem.ItemTemplateId = item.ItemTemplateId
 	dbitem.ExpiryDate = item.ExpiryDate
 
-	db.DB.Save(&dbitem)
+	err = db.DB.Save(&dbitem).Error
+
+	if err != nil {
+		zap.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
 
 	c.JSON(http.StatusNoContent, nil)
 }
