@@ -24,7 +24,7 @@ import (
 // @Failure 400 "Invalid request body"
 // @Failure 404 "Item not found"
 // @Failure 500 "Internal server error"
-// @Router /item/{id} [get]
+// @Router /api/v1/item/{id} [get]
 func (a *ApiController) GetItemApi(c *gin.Context) {
 	zap := logger.GetLogger()
 	id := c.Param("id")
@@ -71,7 +71,7 @@ func (a *ApiController) GetItemApi(c *gin.Context) {
 // @Success 204 "No Content"
 // @Failure 400 "Invalid request body"
 // @Failure 500 "Internal server error"
-// @Router /item [post]
+// @Router /api/v1/item [post]
 func (a *ApiController) AddItemApi(c *gin.Context) {
 	var request schema.Item
 	zap := logger.GetLogger()
@@ -119,7 +119,7 @@ func (a *ApiController) AddItemApi(c *gin.Context) {
 // @Success 204 "Succesfully deleted (no content)"
 // @Failure 400 "Invalid request body"
 // @Failure 404 "Item not found"
-// @Router /item/{id} [delete]
+// @Router /api/v1/item/{id} [delete]
 func (a *ApiController) DeleteItemApi(c *gin.Context) {
 	stringId := c.Param("id")
 	zap := logger.GetLogger()
@@ -181,7 +181,7 @@ func (a *ApiController) DeleteItemApi(c *gin.Context) {
 // @Success 204 "Succesfully updated (no content)"
 // @Failure 400 "Invalid request body"
 // @Failure 404 "Item not found"
-// @Router /item/{id} [patch]
+// @Router /api/v1/item/{id} [patch]
 func (a *ApiController) PatchItemApi(c *gin.Context) {
 	id := c.Param("id")
 	zap := logger.GetLogger()
@@ -196,7 +196,8 @@ func (a *ApiController) PatchItemApi(c *gin.Context) {
 	if err != nil {
 		zap := logger.GetLogger()
 		zap.Error(err.Error())
-		c.JSON(http.StatusBadRequest, nil)
+		c.JSON(http.StatusInternalServerError, nil)
+		return
 	}
 
 	var dbitem schema.Item

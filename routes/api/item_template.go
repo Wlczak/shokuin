@@ -23,7 +23,7 @@ import (
 // @Failure 400 "Invalid request body"
 // @Failure 404 "Item template not found"
 // @Failure 500 "Internal server error"
-// @Router /item_template/{id} [get]
+// @Router /api/v1/item_template/{id} [get]
 func (a *ApiController) GetItemTemplateApi(c *gin.Context) {
 	id := c.Param("id")
 
@@ -63,7 +63,7 @@ func (a *ApiController) GetItemTemplateApi(c *gin.Context) {
 // @Success 204 "No Content"
 // @Failure 400 "Invalid request body"
 // @Failure 500 "Internal server error"
-// @Router /item_template [post]
+// @Router /api/v1/item_template [post]
 func (a *ApiController) AddItemTemplateApi(c *gin.Context) {
 	var request api_schema.ItemTemplate
 	zap := logger.GetLogger()
