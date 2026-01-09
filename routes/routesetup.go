@@ -72,7 +72,7 @@ func SetupRouter() *gin.Engine {
 		item_template := apiv1.Group("/item_template")
 		{
 			item_template.GET(":id", c.GetItemTemplateApi)
-			// item_template.GET("/barcode/:barcode", c.GetItemTemplateByBarcodeApi)
+			item_template.GET("/barcode/:barcode", c.GetItemTemplateByBarcodeApi)
 			item_template.POST("", c.AddItemTemplateApi)
 			item_template.DELETE(":id", c.DeleteItemTemplateApi)
 			item_template.PATCH(":id", c.PatchItemTemplateApi)

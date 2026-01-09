@@ -7,7 +7,6 @@ import (
 	"wlczak/shokuin/database/schema"
 	"wlczak/shokuin/logger"
 	api_schema "wlczak/shokuin/routes/api/schema"
-	"wlczak/shokuin/routes/error_handl"
 
 	"github.com/gin-gonic/gin"
 )
@@ -188,48 +187,64 @@ func (a *ApiController) PatchItemTemplateApi(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-func GetItemTemplateByBarcodeApi(c *gin.Context) {
-	var response api_schema.Response
-	var request schema.ItemTemplate
-	var itemTemplate schema.ItemTemplate
-
-	err := c.ShouldBindJSON(&request)
-	if err != nil {
-		error_handl.HandleErrorJson(c, err)
+// GetItemTemplateByBarcodeApi returns the item template with the given barcode
+// @Summary Get an item template by barcode
+// @Description Returns the item template with the given barcode
+// @Tags Item template
+// @Accept json
+// @Produce json
+// @Param barcode path string true "Item template barcode"
+// @Success 200 {object} api_schema.ItemTemplate
+// @Failure 400 "Invalid request body"
+// @Failure 404 "Item template not found"
+// @Failure 500 "Internal server error"
+// @Router /api/v1/item_template/barcode/{barcode} [get]
+func (a *ApiController) GetItemTemplateByBarcodeApi(c *gin.Context) {
+	zap := logger.GetLogger()
+	barcode := c.Param("barcode")
+	if barcode == "" {
+		c.JSON(http.StatusBadRequest, nil)
 		return
 	}
+
+	var DBitemTemplate schema.ItemTemplate
 
 	db, err := database.GetDB()
 
 	if err != nil {
-		zap := logger.GetLogger()
 		zap.Error(err.Error())
-		panic(err)
+		c.JSON(http.StatusInternalServerError, nil)
 	}
 
 	var count int64
-	db.DB.Model(&schema.ItemTemplate{}).Where("barcode = ?", request.Barcode).Count(&count)
+	err = db.DB.Model(&schema.ItemTemplate{}).Where("barcode = ?", barcode).Count(&count).Error
+
+	if err != nil {
+		zap.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
 
 	if count == 0 {
-		response.Success = false
-		response.Message = "Item template not found"
-		response.Code = http.StatusNotFound
-		c.JSON(response.Code, response)
+		c.JSON(http.StatusNotFound, nil)
 		return
 	} else {
-		err = db.DB.Where("barcode = ?", request.Barcode).First(&itemTemplate).Error
+		err = db.DB.Where("barcode = ?", barcode).First(&DBitemTemplate).Error
 		if err != nil {
 			zap := logger.GetLogger()
 			zap.Error(err.Error())
-			error_handl.HandleErrorJson(c, err)
+			c.JSON(http.StatusInternalServerError, nil)
 			return
 		}
 	}
 
-	response.Success = true
-	response.Message = "Item template added successfully"
-	response.Code = http.StatusOK
-	response.Data = itemTemplate
+	itemTemplate := &api_schema.ItemTemplate{
+		Name:           DBitemTemplate.Name,
+		Barcode:        DBitemTemplate.Barcode,
+		Category:       DBitemTemplate.Category,
+		ExpectedExpiry: DBitemTemplate.ExpectedExpiry,
+		Image:          DBitemTemplate.Image,
+	}
 
-	c.JSON(response.Code, response)
+	c.JSON(http.StatusOK, itemTemplate)
 }
