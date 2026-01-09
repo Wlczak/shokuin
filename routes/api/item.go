@@ -19,14 +19,14 @@ func (a *ApiController) GetItemApi(c *gin.Context) {
 // AddItemApi adds a new item to the database
 // @Summary Add a new item
 // @Description Adds a new item. The expiry date must not be older than 30 days.
-// @Tags items
+// @Tags item
 // @Accept json
 // @Produce json
-// @Param item body schema.Item true "Item to add"
+// @Param item body api_schema.AddItem true "Item to add"
 // @Success 204 {string} string "No Content"
-// @Failure 400 {object} map[string]string "Invalid request body"
-// @Failure 500 {object} map[string]string "Internal server error"
-// @Router /items [post]
+// @Failure 400 "Invalid request body"
+// @Failure 500 "Internal server error"
+// @Router /item [post]
 func (a *ApiController) AddItemApi(c *gin.Context) {
 	var request schema.Item
 

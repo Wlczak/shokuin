@@ -1,5 +1,10 @@
 definitions:
-  schema.Item:
+  api_schema.AddItem:
+    properties:
+      barcode:
+        type: string
+      name:
+        type: string
     type: object
 info:
   contact: {}
@@ -15,7 +20,7 @@ paths:
         name: item
         required: true
         schema:
-          $ref: '#/definitions/schema.Item'
+          $ref: '#/definitions/api_schema.AddItem'
       produces:
       - application/json
       responses:
@@ -25,17 +30,9 @@ paths:
             type: string
         "400":
           description: Invalid request body
-          schema:
-            additionalProperties:
-              type: string
-            type: object
         "500":
           description: Internal server error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
       summary: Add a new item
       tags:
-      - items
+      - item
 swagger: "2.0"
