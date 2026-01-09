@@ -5,6 +5,7 @@ import (
 	"wlczak/shokuin/database"
 	"wlczak/shokuin/database/schema"
 	"wlczak/shokuin/logger"
+	api_schema "wlczak/shokuin/routes/api/schema"
 
 	"gorm.io/gorm"
 )
@@ -22,7 +23,7 @@ func getItemTemplateModel() gorm.DB {
 	return *db.DB.Model(&schema.ItemTemplate{})
 }
 
-func IsItemTemplateOverlap(itemTemplate *schema.ItemTemplate) error {
+func IsItemTemplateOverlap(itemTemplate *api_schema.ItemTemplate) error {
 	db := getItemTemplateModel()
 
 	var count int64

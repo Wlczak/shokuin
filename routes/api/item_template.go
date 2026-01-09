@@ -53,44 +53,80 @@ func (a *ApiController) GetItemTemplateApi(c *gin.Context) {
 
 }
 
-func AddItemTemplateApi(c *gin.Context) {
-	var response api_schema.Response
-	var request schema.ItemTemplate
-
+// AddItemTemplateApi adds a new item template to the database
+// @Summary Add a new item template
+// @Description Adds a new item template
+// @Tags Item template
+// @Accept json
+// @Produce json
+// @Param item_template body api_schema.ItemTemplate true "Item template to add"
+// @Success 204 "No Content"
+// @Failure 400 "Invalid request body"
+// @Failure 500 "Internal server error"
+// @Router /item_template [post]
+func (a *ApiController) AddItemTemplateApi(c *gin.Context) {
+	var request api_schema.ItemTemplate
+	zap := logger.GetLogger()
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
-		error_handl.HandleErrorJson(c, err)
+		zap.Error(err.Error())
+		c.JSON(http.StatusBadRequest, nil)
 		return
 	}
 
 	err = model.IsItemTemplateOverlap(&request)
 
 	if err != nil {
-		error_handl.HandleErrorJson(c, err)
+		zap.Error(err.Error())
+		c.JSON(http.StatusNotModified, &api_schema.ErrorMessage{
+			Error: err.Error(),
+		})
 		return
 	}
 
 	db, err := database.GetDB()
 
 	if err != nil {
-		zap := logger.GetLogger()
 		zap.Error(err.Error())
-		panic(err)
+		c.JSON(http.StatusInternalServerError, nil)
+		return
 	}
 
 	err = db.DB.Create(&request).Error
 	if err != nil {
-		zap := logger.GetLogger()
 		zap.Error(err.Error())
-		error_handl.HandleErrorJson(c, err)
+		c.JSON(http.StatusInternalServerError, nil)
 		return
 	}
 
-	response.Success = true
-	response.Message = "Item template added successfully"
-	response.Code = http.StatusOK
+	c.JSON(http.StatusOK, nil)
+}
 
-	c.JSON(response.Code, response)
+func (a *ApiController) DeleteItemTemplateApi(c *gin.Context) {
+	id := c.Param("id")
+	zap := logger.GetLogger()
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, nil)
+		return
+	}
+
+	db, err := database.GetDB()
+
+	if err != nil {
+		zap.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	err = db.DB.Where("id = ?", id).Delete(&schema.ItemTemplate{}).Error
+	if err != nil {
+		zap.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	c.JSON(http.StatusNoContent, nil)
 }
 
 func GetItemTemplateByBarcodeApi(c *gin.Context) {

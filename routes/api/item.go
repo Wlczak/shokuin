@@ -68,7 +68,7 @@ func (a *ApiController) GetItemApi(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param item body api_schema.Item true "Item to add"
-// @Success 204 {string} string "No Content"
+// @Success 204 "No Content"
 // @Failure 400 "Invalid request body"
 // @Failure 500 "Internal server error"
 // @Router /item [post]
