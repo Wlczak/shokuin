@@ -9,7 +9,6 @@ import (
 	"wlczak/shokuin/database/schema"
 	"wlczak/shokuin/logger"
 	api_schema "wlczak/shokuin/routes/api/schema"
-	"wlczak/shokuin/routes/error_handl"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +21,9 @@ import (
 // @Produce json
 // @Param id path string true "Item ID"
 // @Success 200 {object} api_schema.Item
+// @Failure 400 "Invalid request body"
 // @Failure 404 "Item not found"
+// @Failure 500 "Internal server error"
 // @Router /item/{id} [get]
 func (a *ApiController) GetItemApi(c *gin.Context) {
 	id := c.Param("id")
@@ -36,7 +37,7 @@ func (a *ApiController) GetItemApi(c *gin.Context) {
 	if err != nil {
 		zap := logger.GetLogger()
 		zap.Error(err.Error())
-		panic(err)
+		c.JSON(http.StatusInternalServerError, nil)
 	}
 
 	var dbitem schema.Item
@@ -47,7 +48,6 @@ func (a *ApiController) GetItemApi(c *gin.Context) {
 		return
 	}
 	item := api_schema.Item{
-		ID:             dbitem.ID,
 		ItemTemplateId: dbitem.ItemTemplateId,
 		ExpiryDate:     dbitem.ExpiryDate,
 	}
@@ -60,7 +60,7 @@ func (a *ApiController) GetItemApi(c *gin.Context) {
 // @Tags item
 // @Accept json
 // @Produce json
-// @Param item body api_schema.AddItem true "Item to add"
+// @Param item body api_schema.Item true "Item to add"
 // @Success 204 {string} string "No Content"
 // @Failure 400 "Invalid request body"
 // @Failure 500 "Internal server error"
@@ -70,7 +70,7 @@ func (a *ApiController) AddItemApi(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
-		error_handl.HandleErrorJson(c, err)
+		c.JSON(http.StatusBadRequest, nil)
 		return
 	}
 
@@ -85,7 +85,7 @@ func (a *ApiController) AddItemApi(c *gin.Context) {
 	if err != nil {
 		zap := logger.GetLogger()
 		zap.Error(err.Error())
-		panic(err)
+		c.JSON(http.StatusInternalServerError, nil)
 	}
 
 	db.DB.Create(&request)
@@ -137,6 +137,58 @@ func (a *ApiController) DeleteItemApi(c *gin.Context) {
 	}
 
 	db.DB.Delete(dbitem)
+
+	c.JSON(http.StatusNoContent, nil)
+}
+
+// PatchItemApi updates the item with the given id
+// @Summary Update an item
+// @Description Updates the item with the given id
+// @Tags item
+// @Accept json
+// @Produce json
+// @Param id path string true "Item ID"
+// @Param item body api_schema.Item true "Item to update"
+// @Success 204 "Succesfully updated (no content)"
+// @Failure 400 "Invalid request body"
+// @Failure 404 "Item not found"
+// @Router /item/{id} [patch]
+func (a *ApiController) PatchItemApi(c *gin.Context) {
+	id := c.Param("id")
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, nil)
+		return
+	}
+
+	db, err := database.GetDB()
+
+	if err != nil {
+		zap := logger.GetLogger()
+		zap.Error(err.Error())
+		c.JSON(http.StatusBadRequest, nil)
+	}
+
+	var dbitem schema.Item
+	db.DB.Where("id = ?", id).First(&dbitem)
+
+	if dbitem.ID == 0 {
+		c.JSON(http.StatusNotFound, nil)
+		return
+	}
+
+	var item api_schema.Item
+	err = c.ShouldBindJSON(&item)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, nil)
+		return
+	}
+
+	dbitem.ItemTemplateId = item.ItemTemplateId
+	dbitem.ExpiryDate = item.ExpiryDate
+
+	db.DB.Save(&dbitem)
 
 	c.JSON(http.StatusNoContent, nil)
 }

@@ -8,7 +8,6 @@ type AddItem struct {
 }
 
 type Item struct {
-	ID             uint      `json:"id"`
 	ItemTemplateId int       `json:"item_template_id"`
 	ExpiryDate     time.Time `json:"expiry_date"`
 }
