@@ -60,7 +60,8 @@ func (a *ApiController) GetItemTemplateApi(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param item_template body api_schema.ItemTemplate true "Item template to add"
-// @Success 204 "No Content"
+// @Success 204 "Succesfully added (no content)"
+// @Failure 304 "Item template with name already exists"
 // @Failure 400 "Invalid request body"
 // @Failure 500 "Internal server error"
 // @Router /api/v1/item_template [post]
@@ -99,9 +100,20 @@ func (a *ApiController) AddItemTemplateApi(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, nil)
+	c.JSON(http.StatusNoContent, nil)
 }
 
+// DeleteItemTemplateApi deletes the item template with the given id
+// @Summary Delete an item template
+// @Description Deletes the item template with the given id
+// @Tags Item template
+// @Accept json
+// @Produce json
+// @Param id path string true "Item template ID"
+// @Success 204 "Succesfully deleted (no content)"
+// @Failure 400 "Invalid request body"
+// @Failure 404 "Item template not found"
+// @Router /api/v1/item_template/{id} [delete]
 func (a *ApiController) DeleteItemTemplateApi(c *gin.Context) {
 	id := c.Param("id")
 	zap := logger.GetLogger()
@@ -120,6 +132,53 @@ func (a *ApiController) DeleteItemTemplateApi(c *gin.Context) {
 	}
 
 	err = db.DB.Where("id = ?", id).Delete(&schema.ItemTemplate{}).Error
+	if err != nil {
+		zap.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	c.JSON(http.StatusNoContent, nil)
+}
+
+// PatchItemTemplateApi updates the item template with the given id
+// @Summary Update an item template
+// @Description Updates the item template with the given id
+// @Tags Item template
+// @Accept json
+// @Produce json
+// @Param id path string true "Item template ID"
+// @Param item_template body api_schema.ItemTemplate true "Item template to update"
+// @Success 204 "Succesfully updated (no content)"
+// @Failure 400 "Invalid request body"
+// @Failure 404 "Item template not found"
+// @Router /api/v1/item_template/{id} [patch]
+func (a *ApiController) PatchItemTemplateApi(c *gin.Context) {
+	id := c.Param("id")
+	zap := logger.GetLogger()
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, nil)
+		return
+	}
+
+	db, err := database.GetDB()
+
+	if err != nil {
+		zap.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	var request api_schema.ItemTemplate
+	err = c.ShouldBindJSON(&request)
+	if err != nil {
+		zap.Error(err.Error())
+		c.JSON(http.StatusBadRequest, nil)
+		return
+	}
+
+	err = db.DB.Model(&schema.ItemTemplate{}).Where("id = ?", id).Updates(request).Error
 	if err != nil {
 		zap.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, nil)
