@@ -1,3 +1,4 @@
 /logger/logs
 .env
 /images
+shokuin.db
