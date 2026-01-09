@@ -7,18 +7,27 @@ import (
 	"wlczak/shokuin/database"
 	"wlczak/shokuin/database/schema"
 	"wlczak/shokuin/logger"
-	api_schema "wlczak/shokuin/routes/api/schema"
 	"wlczak/shokuin/routes/error_handl"
 
 	"github.com/gin-gonic/gin"
 )
 
-func HandleItemApi(c *gin.RouterGroup) {
-	c.POST("/create", AddItemApi)
+func (a *ApiController) GetItemApi(c *gin.Context) {
+
 }
 
-func AddItemApi(c *gin.Context) {
-	var response api_schema.Response
+// AddItemApi adds a new item to the database
+// @Summary Add a new item
+// @Description Adds a new item. The expiry date must not be older than 30 days.
+// @Tags items
+// @Accept json
+// @Produce json
+// @Param item body schema.Item true "Item to add"
+// @Success 204 {string} string "No Content"
+// @Failure 400 {object} map[string]string "Invalid request body"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /items [post]
+func (a *ApiController) AddItemApi(c *gin.Context) {
 	var request schema.Item
 
 	err := c.ShouldBindJSON(&request)
@@ -28,9 +37,6 @@ func AddItemApi(c *gin.Context) {
 	}
 
 	if request.ExpiryDate.Before(time.Now().Add(-time.Hour * 24 * 30)) {
-		response.Success = false
-		response.Message = "expiry date is broken"
-		c.JSON(response.Code, response)
 		return
 	}
 
@@ -38,15 +44,13 @@ func AddItemApi(c *gin.Context) {
 
 	db, err := database.GetDB()
 
-	db.DB.Create(&request)
-
 	if err != nil {
 		zap := logger.GetLogger()
 		zap.Error(err.Error())
 		panic(err)
 	}
-	response.Success = true
-	response.Message = "success"
-	response.Code = http.StatusOK
-	c.JSON(response.Code, response)
+
+	db.DB.Create(&request)
+
+	c.JSON(http.StatusNoContent, nil)
 }

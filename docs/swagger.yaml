@@ -1,0 +1,41 @@
+definitions:
+  schema.Item:
+    type: object
+info:
+  contact: {}
+paths:
+  /items:
+    post:
+      consumes:
+      - application/json
+      description: Adds a new item. The expiry date must not be older than 30 days.
+      parameters:
+      - description: Item to add
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/schema.Item'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Add a new item
+      tags:
+      - items
+swagger: "2.0"

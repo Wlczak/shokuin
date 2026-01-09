@@ -2,3 +2,5 @@
 .env
 /images
 shokuin.db
+docs/docs.go
+docs/swagger.json

@@ -8,7 +8,11 @@ import (
 	"wlczak/shokuin/logger"
 	"wlczak/shokuin/routes"
 
+	_ "wlczak/shokuin/docs"
+
 	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // var EnvVars = []string{
@@ -76,6 +80,9 @@ func main() {
 	}
 
 	r := routes.SetupRouter()
+	if isProd := os.Getenv("IS_PROD"); isProd == "false" {
+		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	}
 
 	// Listen and Server in 0.0.0.0:8080
 	err = r.Run(":8080")
