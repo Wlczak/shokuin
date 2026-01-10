@@ -3,7 +3,8 @@ package error_handl
 import (
 	"net/http"
 	"os"
-	"wlczak/shokuin/logger"
+
+	"github.com/wlczak/shokuin/logger"
 
 	"github.com/gin-gonic/gin"
 )

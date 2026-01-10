@@ -1,4 +1,4 @@
-module wlczak/shokuin
+module github.com/wlczak/shokuin
 
 go 1.25.5
 

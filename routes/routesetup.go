@@ -2,7 +2,8 @@ package routes
 
 import (
 	"net/http"
-	"wlczak/shokuin/routes/api"
+
+	"github.com/wlczak/shokuin/routes/api"
 
 	"github.com/gin-gonic/gin"
 )

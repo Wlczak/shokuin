@@ -1,8 +1,8 @@
 package database
 
 import (
-	"wlczak/shokuin/database/schema"
-	"wlczak/shokuin/logger"
+	"github.com/wlczak/shokuin/database/schema"
+	"github.com/wlczak/shokuin/logger"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

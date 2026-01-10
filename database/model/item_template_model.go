@@ -2,10 +2,11 @@ package model
 
 import (
 	"errors"
-	"wlczak/shokuin/database"
-	"wlczak/shokuin/database/schema"
-	"wlczak/shokuin/logger"
-	api_schema "wlczak/shokuin/routes/api/schema"
+
+	"github.com/wlczak/shokuin/database"
+	"github.com/wlczak/shokuin/database/schema"
+	"github.com/wlczak/shokuin/logger"
+	api_schema "github.com/wlczak/shokuin/routes/api/schema"
 
 	"gorm.io/gorm"
 )

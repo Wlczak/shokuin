@@ -1,7 +1,7 @@
 package schema
 
 import (
-	"wlczak/shokuin/utils"
+	"github.com/wlczak/shokuin/utils"
 
 	"gorm.io/gorm"
 )

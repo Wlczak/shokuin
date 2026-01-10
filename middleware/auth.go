@@ -2,8 +2,9 @@ package middleware
 
 import (
 	"net/http"
-	"wlczak/shokuin/logger"
-	"wlczak/shokuin/utils"
+
+	"github.com/wlczak/shokuin/logger"
+	"github.com/wlczak/shokuin/utils"
 
 	"github.com/gin-gonic/gin"
 )

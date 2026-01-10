@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"os"
 	"time"
-	"wlczak/shokuin/database"
-	"wlczak/shokuin/logger"
-	"wlczak/shokuin/routes"
 
-	_ "wlczak/shokuin/docs"
+	"github.com/wlczak/shokuin/database"
+	"github.com/wlczak/shokuin/logger"
+	"github.com/wlczak/shokuin/routes"
+
+	_ "github.com/wlczak/shokuin/docs"
 
 	"github.com/joho/godotenv"
 	swaggerFiles "github.com/swaggo/files"
