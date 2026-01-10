@@ -69,3 +69,4 @@ jobs:
               with:
                   go-version-input: 1.25.5
                   go-package: ./...
+                  repo-checkout: false
