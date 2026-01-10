@@ -16,6 +16,11 @@ jobs:
               uses: actions/setup-go@v4
               with:
                   go-version: "1.25.5"
+            
+            - name: Generate docs
+              run: |
+                go install github.com/swaggo/swag/cmd/swag@latest
+                bash generate_docs.sh
 
             - name: Tidy modules
               run: |
