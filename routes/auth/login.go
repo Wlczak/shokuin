@@ -5,10 +5,11 @@ import (
 	"net/http"
 	"os"
 	"time"
-	"wlczak/shokuin/database/model"
-	"wlczak/shokuin/database/schema"
-	"wlczak/shokuin/logger"
-	"wlczak/shokuin/utils"
+
+	"github.com/wlczak/shokuin/database/model"
+	"github.com/wlczak/shokuin/database/schema"
+	"github.com/wlczak/shokuin/logger"
+	"github.com/wlczak/shokuin/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"

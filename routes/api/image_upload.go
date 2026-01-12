@@ -6,8 +6,9 @@ import (
 	"net/http"
 	"os"
 	"slices"
-	"wlczak/shokuin/logger"
-	"wlczak/shokuin/routes/error_handl"
+
+	"github.com/wlczak/shokuin/logger"
+	"github.com/wlczak/shokuin/routes/error_handl"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

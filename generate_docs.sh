@@ -1,0 +1,1 @@
+swag init -g routes/routesetup.go -g routes/api/item.go -g routes/api/schema/item_schema.go -g routes/api/item_template.go -g routes/api/schema/item_template_schema.go -g database/schema/item.go -g database/schema/item_template.go

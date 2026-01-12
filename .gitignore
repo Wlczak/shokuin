@@ -1,3 +1,7 @@
 /logger/logs
 .env
 /images
+shokuin.db
+docs/docs.go
+docs/swagger.json
+docs/swagger.yaml

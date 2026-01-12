@@ -3,10 +3,10 @@ package model
 import (
 	"fmt"
 
-	"wlczak/shokuin/database"
-	"wlczak/shokuin/database/schema"
-	"wlczak/shokuin/logger"
-	"wlczak/shokuin/utils"
+	"github.com/wlczak/shokuin/database"
+	"github.com/wlczak/shokuin/database/schema"
+	"github.com/wlczak/shokuin/logger"
+	"github.com/wlczak/shokuin/utils"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"

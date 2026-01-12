@@ -1,14 +1,9 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
-	"strings"
-	"wlczak/shokuin/middleware"
-	"wlczak/shokuin/routes/api"
-	"wlczak/shokuin/routes/auth"
-	"wlczak/shokuin/routes/form"
-	"wlczak/shokuin/utils"
+
+	"github.com/wlczak/shokuin/routes/api"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,65 +24,60 @@ func SetupRouter() *gin.Engine {
 
 	r.StaticFS("/static", http.Dir("static"))
 
-	r.LoadHTMLGlob("templates/*")
+	// r.LoadHTMLGlob("templates/*")
 
 	// Ping test
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(http.StatusOK, "pong")
 	})
 
-	g1 := r.Group("/")
+	// r.GET("/register", auth.HandleRegister)
+	// r.POST("/register", auth.HandleRegisterPost)
+
+	// r.GET("/login", auth.HandleLogin)
+	// r.POST("/login", auth.HandleLoginPost)
+
+	// r.Group("/admin", middleware.Auth(utils.AuthLevelAdmin)).GET("/", func(c *gin.Context) {
+	// 	c.String(http.StatusOK, "admin")
+	// })
+
+	// userGr := r.Group("/user", middleware.Auth(utils.AuthLevelUser))
+
+	// userGr.GET("/", func(c *gin.Context) {
+	// 	c.String(http.StatusOK, "user")
+	// })
+
+	// forms := r.Group("/form")
+	// {
+	// 	forms.Use(middleware.Auth(utils.AuthLevelUser))
+	// 	forms.GET("/additem", form.HandleAddItem)
+	// }
+
+	//	@title			Shokuin API
+	//	@version		1.0
+
+	//	@host		localhost:8080
+	//	@BasePath	/api/v1
+
+	apiv1 := r.Group("/api/v1")
 	{
-		g1.Use(middleware.Auth(utils.AuthLevelNone))
-		g1.GET("/", func(c *gin.Context) {
+		c := api.ApiController{}
+		item := apiv1.Group("/item")
+		{
+			item.GET(":id", c.GetItemApi)
+			item.POST("", c.AddItemApi)
+			item.DELETE(":id", c.DeleteItemApi)
+			item.PATCH(":id", c.PatchItemApi)
+		}
 
-			c.HTML(http.StatusOK, "index.tmpl", gin.H{
-				"title":   "Home",
-				"message": "hi",
-			})
-		})
-	}
-
-	r.GET("/register", auth.HandleRegister)
-	r.POST("/register", auth.HandleRegisterPost)
-
-	r.GET("/login", auth.HandleLogin)
-	r.POST("/login", auth.HandleLoginPost)
-
-	r.Group("/admin", middleware.Auth(utils.AuthLevelAdmin)).GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "admin")
-	})
-
-	userGr := r.Group("/user", middleware.Auth(utils.AuthLevelUser))
-
-	userGr.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "user")
-	})
-
-	forms := r.Group("/form")
-	{
-		forms.Use(middleware.Auth(utils.AuthLevelUser))
-		forms.GET("/additem", form.HandleAddItem)
-	}
-
-	apig := r.Group("/api")
-	{
-		apig.Match([]string{"GET"}, "/help/*any", func(c *gin.Context) {
-			routes := r.Routes()
-			c.Header("Content-Type", "text/html")
-			requestUri := strings.Replace(c.Request.RequestURI, "/api/help", "/api", 1)
-
-			for _, route := range routes {
-				if strings.HasPrefix(route.Path, requestUri) && route.Path != "/api/*any" {
-					c.String(http.StatusOK, fmt.Sprintf("<a href=\"%s\">%s</a><br>", route.Path, route.Path))
-				}
-			}
-		})
-		api.HandleItemApi(apig.Group("/item", middleware.ApiAuth(utils.AuthLevelNone)))
-
-		api.HandleItemTemplateApi(apig.Group("/itemtemplate", middleware.ApiAuth(utils.AuthLevelNone)))
-
-		api.HandleImageUploadApi(apig.Group("/image", middleware.ApiAuth(utils.AuthLevelNone)))
+		item_template := apiv1.Group("/item_template")
+		{
+			item_template.GET(":id", c.GetItemTemplateApi)
+			item_template.GET("/barcode/:barcode", c.GetItemTemplateByBarcodeApi)
+			item_template.POST("", c.AddItemTemplateApi)
+			item_template.DELETE(":id", c.DeleteItemTemplateApi)
+			item_template.PATCH(":id", c.PatchItemTemplateApi)
+		}
 	}
 
 	return r

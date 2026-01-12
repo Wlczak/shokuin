@@ -3,9 +3,10 @@ package auth
 import (
 	"errors"
 	"net/http"
-	"wlczak/shokuin/database/model"
-	"wlczak/shokuin/database/schema"
-	"wlczak/shokuin/routes/error_handl"
+
+	"github.com/wlczak/shokuin/database/model"
+	"github.com/wlczak/shokuin/database/schema"
+	"github.com/wlczak/shokuin/routes/error_handl"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
