@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 
+	"github.com/openfoodfacts/openfoodfacts-go"
 	"github.com/wlczak/shokuin/database"
 	"github.com/wlczak/shokuin/database/model"
 	"github.com/wlczak/shokuin/database/schema"
@@ -248,4 +249,25 @@ func (a *ApiController) GetItemTemplateByBarcodeApi(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, itemTemplate)
+}
+
+func (a *ApiController) GetItemTemplateFromOpenFoodFacts(c *gin.Context) {
+	barcode := c.Param("barcode")
+
+	zap := logger.GetLogger()
+
+	api := openfoodfacts.NewClient("world", "", "")
+	api.UserAgent("Shokuin/1.0")
+
+	item, err := api.Product(barcode)
+	if err != nil {
+		zap.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+	if item == nil {
+		c.JSON(http.StatusNotFound, nil)
+		return
+	}
+	c.JSON(http.StatusOK, item)
 }

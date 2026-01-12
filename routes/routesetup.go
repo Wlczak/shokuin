@@ -1,9 +1,12 @@
 package routes
 
 import (
+	"context"
 	"net/http"
+	"time"
 
 	"github.com/wlczak/shokuin/routes/api"
+	"golang.org/x/time/rate"
 
 	"github.com/gin-gonic/gin"
 )
@@ -59,8 +62,14 @@ func SetupRouter() *gin.Engine {
 	//	@host		localhost:8080
 	//	@BasePath	/api/v1
 
+	const apiRequestLimit = 5
+	const apiRequestInterval = time.Minute / 10 // 10 requests per minute
+	const apiRequestTimeout = time.Second * 30
+
 	apiv1 := r.Group("/api/v1")
 	{
+		openFoodFactsApiLimiter := rate.NewLimiter(rate.Every(apiRequestInterval), apiRequestLimit)
+
 		c := api.ApiController{}
 		item := apiv1.Group("/item")
 		{
@@ -77,6 +86,14 @@ func SetupRouter() *gin.Engine {
 			item_template.POST("", c.AddItemTemplateApi)
 			item_template.DELETE(":id", c.DeleteItemTemplateApi)
 			item_template.PATCH(":id", c.PatchItemTemplateApi)
+
+			item_template.GET("/open_food_facts/:barcode", func(gin *gin.Context) {
+				ctx, cancel := context.WithTimeout(context.Background(), apiRequestTimeout)
+				defer cancel()
+
+				openFoodFactsApiLimiter.Wait(ctx)
+				c.GetItemTemplateFromOpenFoodFacts(gin)
+			})
 		}
 	}
 
