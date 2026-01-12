@@ -91,7 +91,11 @@ func SetupRouter() *gin.Engine {
 				ctx, cancel := context.WithTimeout(context.Background(), apiRequestTimeout)
 				defer cancel()
 
-				openFoodFactsApiLimiter.Wait(ctx)
+				err := openFoodFactsApiLimiter.Wait(ctx)
+				if err != nil {
+					gin.JSON(http.StatusTooManyRequests, nil)
+					return
+				}
 				c.GetItemTemplateFromOpenFoodFacts(gin)
 			})
 		}
