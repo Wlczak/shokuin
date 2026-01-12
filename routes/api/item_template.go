@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 
+	"github.com/openfoodfacts/openfoodfacts-go"
 	"github.com/wlczak/shokuin/database"
 	"github.com/wlczak/shokuin/database/model"
 	"github.com/wlczak/shokuin/database/schema"
@@ -248,4 +249,40 @@ func (a *ApiController) GetItemTemplateByBarcodeApi(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, itemTemplate)
+}
+
+// GetItemTemplateFromOpenFoodFacts returns the item template with the given barcode
+// @Summary Get an item template by barcode
+// @Description Returns the item template with the given barcode
+// @Tags Item template
+// @Accept json
+// @Produce json
+// @Param barcode path string true "Item template barcode"
+// @Success 200 {object} api_schema.ItemTemplate
+// @Failure 400 "Invalid request body"
+// @Failure 404 "Item template not found"
+// @Failure 500 "Internal server error"
+// @Router /api/v1/item_template/open_food_facts/{barcode} [get]
+func (a *ApiController) GetItemTemplateFromOpenFoodFacts(c *gin.Context) {
+	barcode := c.Param("barcode")
+
+	zap := logger.GetLogger()
+
+	api := openfoodfacts.NewClient("world", "", "")
+	api.UserAgent("Shokuin/1.0")
+	api.Sandbox()
+
+	item, err := api.Product(barcode)
+	if err != nil {
+		zap.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, api_schema.ErrorMessage{
+			Error: err.Error(),
+		})
+		return
+	}
+	if item == nil {
+		c.JSON(http.StatusNotFound, nil)
+		return
+	}
+	c.JSON(http.StatusOK, item)
 }
