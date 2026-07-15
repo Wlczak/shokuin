@@ -1,0 +1,283 @@
+definitions:
+  api_schema.Item:
+    properties:
+      expiry_date:
+        type: string
+      item_template_id:
+        type: integer
+    type: object
+  api_schema.ItemTemplate:
+    properties:
+      barcode:
+        type: string
+      category:
+        type: integer
+      expected_expiry:
+        type: integer
+      image:
+        type: string
+      name:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/item:
+    post:
+      consumes:
+      - application/json
+      description: Adds a new item. The expiry date must not be older than 30 days.
+      parameters:
+      - description: Item to add
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/api_schema.Item'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid request body
+        "500":
+          description: Internal server error
+      summary: Add a new item
+      tags:
+      - Item
+  /api/v1/item/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes the item with the given id
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Succesfully deleted (no content)
+        "400":
+          description: Invalid request body
+        "404":
+          description: Item not found
+      summary: Delete an item
+      tags:
+      - Item
+    get:
+      consumes:
+      - application/json
+      description: Returns the item with the given id
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api_schema.Item'
+        "400":
+          description: Invalid request body
+        "404":
+          description: Item not found
+        "500":
+          description: Internal server error
+      summary: Get an item
+      tags:
+      - Item
+    patch:
+      consumes:
+      - application/json
+      description: Updates the item with the given id
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Item to update
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/api_schema.Item'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Succesfully updated (no content)
+        "400":
+          description: Invalid request body
+        "404":
+          description: Item not found
+      summary: Update an item
+      tags:
+      - Item
+  /api/v1/item_template:
+    post:
+      consumes:
+      - application/json
+      description: Adds a new item template
+      parameters:
+      - description: Item template to add
+        in: body
+        name: item_template
+        required: true
+        schema:
+          $ref: '#/definitions/api_schema.ItemTemplate'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Succesfully added (no content)
+        "304":
+          description: Item template with name already exists
+        "400":
+          description: Invalid request body
+        "500":
+          description: Internal server error
+      summary: Add a new item template
+      tags:
+      - Item template
+  /api/v1/item_template/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes the item template with the given id
+      parameters:
+      - description: Item template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Succesfully deleted (no content)
+        "400":
+          description: Invalid request body
+        "404":
+          description: Item template not found
+      summary: Delete an item template
+      tags:
+      - Item template
+    get:
+      consumes:
+      - application/json
+      description: Returns the item template with the given id
+      parameters:
+      - description: Item template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api_schema.ItemTemplate'
+        "400":
+          description: Invalid request body
+        "404":
+          description: Item template not found
+        "500":
+          description: Internal server error
+      summary: Get an item template
+      tags:
+      - Item template
+    patch:
+      consumes:
+      - application/json
+      description: Updates the item template with the given id
+      parameters:
+      - description: Item template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Item template to update
+        in: body
+        name: item_template
+        required: true
+        schema:
+          $ref: '#/definitions/api_schema.ItemTemplate'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Succesfully updated (no content)
+        "400":
+          description: Invalid request body
+        "404":
+          description: Item template not found
+      summary: Update an item template
+      tags:
+      - Item template
+  /api/v1/item_template/barcode/{barcode}:
+    get:
+      consumes:
+      - application/json
+      description: Returns the item template with the given barcode
+      parameters:
+      - description: Item template barcode
+        in: path
+        name: barcode
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api_schema.ItemTemplate'
+        "400":
+          description: Invalid request body
+        "404":
+          description: Item template not found
+        "500":
+          description: Internal server error
+      summary: Get an item template by barcode
+      tags:
+      - Item template
+  /api/v1/item_template/open_food_facts/{barcode}:
+    get:
+      consumes:
+      - application/json
+      description: Returns the item template with the given barcode
+      parameters:
+      - description: Item template barcode
+        in: path
+        name: barcode
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api_schema.ItemTemplate'
+        "400":
+          description: Invalid request body
+        "404":
+          description: Item template not found
+        "500":
+          description: Internal server error
+      summary: Get an item template by barcode
+      tags:
+      - Item template
+swagger: "2.0"

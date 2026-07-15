@@ -1,72 +1,72 @@
 name: Go CI
 
 on:
-    push:
-        branches: [main]
-    pull_request:
-        branches: ["*"]
+  push:
+    branches: [main]
+  pull_request:
+    branches: ["*"]
 
 jobs:
-    build-and-test:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v6
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
 
-            - name: Set GOCACHE and GOMODCACHE env
-              run: |
-                  echo "GOCACHE=$(go env GOCACHE)" >> $GITHUB_ENV
-                  echo "GOMODCACHE=$(go env GOMODCACHE)" >> $GITHUB_ENV
-            - name: Restore Go caches
-              uses: actions/cache@v5
-              with:
-                  path: |
-                      ${{ env.GOCACHE }}
-                      ${{ env.GOMODCACHE }}
-                  key: go-${{ hashFiles('**/go.sum') }}-${{ matrix.go-version }}
-                  restore-keys: |
-                      go-${{ hashFiles('**/go.sum') }}-
+      - name: Set GOCACHE and GOMODCACHE env
+        run: |
+          echo "GOCACHE=$(go env GOCACHE)" >> $GITHUB_ENV
+          echo "GOMODCACHE=$(go env GOMODCACHE)" >> $GITHUB_ENV
+      - name: Restore Go caches
+        uses: actions/cache@v5
+        with:
+          path: |
+            ${{ env.GOCACHE }}
+            ${{ env.GOMODCACHE }}
+          key: go-${{ hashFiles('**/go.sum') }}-${{ matrix.go-version }}
+          restore-keys: |
+            go-${{ hashFiles('**/go.sum') }}-
 
-            - name: Set up Go
-              uses: actions/setup-go@v4
-              with:
-                  go-version: "1.25.5"
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.25.12"
 
-            - name: Generate docs
-              run: |
-                  go install github.com/swaggo/swag/cmd/swag@latest
-                  bash generate_docs.sh
+      - name: Generate docs
+        run: |
+          go install github.com/swaggo/swag/cmd/swag@latest
+          bash generate_docs.sh
 
-            - name: Tidy modules
-              run: |
-                  go mod tidy
-                  go mod verify
-            - name: golangci-lint
-              uses: golangci/golangci-lint-action@v8
-              with:
-                  version: latest
-                  install-mode: binary
+      - name: Tidy modules
+        run: |
+          go mod tidy
+          go mod verify
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: latest
+          install-mode: binary
 
-            - name: Fmt
-              run: go fmt ./...
+      - name: Fmt
+        run: go fmt ./...
 
-            - name: Vet
-              run: go vet ./...
+      - name: Vet
+        run: go vet ./...
 
-            - name: Build
-              run: go build -v ./...
+      - name: Build
+        run: go build -v ./...
 
-            - uses: dominikh/staticcheck-action@v1
-              with:
-                  version: "latest"
-            # - name: Staticcheck
-            #   run: staticcheck ./...
+      - uses: dominikh/staticcheck-action@v1
+        with:
+          version: "latest"
+      # - name: Staticcheck
+      #   run: staticcheck ./...
 
-            # - name: GolangCI-Lint
-            #   run: golangci-lint run
+      # - name: GolangCI-Lint
+      #   run: golangci-lint run
 
-            - name: govulncheck
-              uses: golang/govulncheck-action@v1
-              with:
-                  go-version-input: 1.25.5
-                  go-package: ./...
-                  repo-checkout: false
+      - name: govulncheck
+        uses: golang/govulncheck-action@v1
+        with:
+          go-version-input: 1.25.12
+          go-package: ./...
+          repo-checkout: false
